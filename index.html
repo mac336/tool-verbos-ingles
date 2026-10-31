@@ -190,13 +190,47 @@ select.jump{font:inherit;font-size:1rem;font-weight:600;border:3px solid var(--l
 .dot.done{background:var(--mint);color:#fff}
 .dot.cur{outline:3px solid var(--sun);outline-offset:1px;color:var(--ink)}
 .dot.done.cur{color:#fff}
+.sfx{position:fixed;top:10px;right:10px;z-index:50;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.2);font-size:22px;cursor:pointer}
 </style>
 
 </head>
 <body>
+<button class="sfx" id="sfx" aria-label="Sonido">🔊</button>
 <div class="wrap" id="app"></div>
 
 <script>
+/* ---------- Sonidos OK/KO (Web Audio, sin ficheros) ---------- */
+let AC = null, MUTED = false;
+try{ MUTED = localStorage.getItem("verbos-mute")==="1"; }catch(e){}
+function audioCtx(){
+  try{
+    if(!AC){ const C = window.AudioContext||window.webkitAudioContext; if(!C) return null; AC = new C(); }
+    if(AC.state==="suspended") AC.resume();
+  }catch(e){ return null; }
+  return AC;
+}
+/* Desbloqueo en el primer toque (iOS/Android) con un buffer silencioso */
+function unlockAudio(){
+  const c = audioCtx(); if(!c) return;
+  try{ const b=c.createBuffer(1,1,22050), s=c.createBufferSource(); s.buffer=b; s.connect(c.destination); s.start(0); }catch(e){}
+  ["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(ev=>document.removeEventListener(ev,unlockAudio,true));
+}
+["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(ev=>document.addEventListener(ev,unlockAudio,true));
+function tone(freq, start, dur, type, vol){
+  const c = audioCtx(); if(!c) return;
+  const t = c.currentTime + start, o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function sfxOk(){ if(MUTED) return; try{ tone(659.25,0,.18,"sine",.3); tone(880,.12,.18,"sine",.3); tone(1318.5,.24,.35,"sine",.25); }catch(e){} }
+function sfxKo(){ if(MUTED) return; try{ tone(220,0,.22,"triangle",.3); tone(164.8,.18,.4,"triangle",.3); }catch(e){} }
+function paintSfx(){ const b=document.getElementById("sfx"); if(b){ b.textContent = MUTED?"🔇":"🔊"; b.setAttribute("aria-pressed", String(MUTED)); b.setAttribute("aria-label", MUTED?"Activar sonido":"Silenciar sonido"); } }
+document.addEventListener("DOMContentLoaded", paintSfx);
+setTimeout(()=>{ paintSfx(); const b=document.getElementById("sfx"); if(b) b.onclick=()=>{ MUTED=!MUTED; try{localStorage.setItem("verbos-mute",MUTED?"1":"0");}catch(e){} paintSfx(); if(!MUTED) sfxOk(); }; },0);
+
 const V = [
 ["be","was/were","been","ser / estar"],["beat","beat","beaten","vencer / batir"],["become","became","become","convertirse en"],
 ["begin","began","begun","empezar"],["bend","bent","bent","doblar"],["bite","bit","bitten","morder"],["blow","blew","blown","soplar"],
@@ -391,6 +425,7 @@ function ask(){
   document.getElementById("back").onclick = home;
 }
 function record(v, good){
+  good ? sfxOk() : sfxKo();
   if(good){S.ok++;S.streak++;S.best=Math.max(S.best,S.streak);}
   else{S.streak=0; if(!S.mistakes.some(m=>m.i===v.i)) S.mistakes.push(v);}
   S.n++;
