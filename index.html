@@ -190,6 +190,31 @@ select.jump{font:inherit;font-size:1rem;font-weight:600;border:3px solid var(--l
 .dot.done{background:var(--mint);color:#fff}
 .dot.cur{outline:3px solid var(--sun);outline-offset:1px;color:var(--ink)}
 .dot.done.cur{color:#fff}
+/* Examen general */
+.exam-card{display:block;width:100%;margin-top:14px;border:none;border-radius:26px;padding:16px 14px;cursor:pointer;text-align:center;color:#fff;
+  background:linear-gradient(135deg,var(--sky),var(--grape));box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
+.exam-card:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.exam-card .ico{display:block;font-size:2.6rem;line-height:1.1}
+.exam-card b{display:block;font-size:1.45rem;font-weight:700;letter-spacing:.5px;margin-top:4px}
+.exam-card span{display:block;font-size:.9rem;opacity:.95;margin-top:2px}
+.exam-info{background:var(--card);border-radius:20px;padding:10px 14px;margin-top:12px;box-shadow:0 4px 0 var(--line);text-align:center;font-weight:500}
+.exam-info .row2 .go{margin-top:10px;font-size:1.05rem;padding:10px}
+.lenpick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
+.lenpick button{border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:1.1rem;min-height:52px}
+.lenpick button.on{border-color:var(--sun);background:var(--sun);color:#2B2350}
+.parent{background:var(--chip);border-radius:16px;padding:6px 12px;margin:0 0 12px;color:var(--soft);font-size:.95rem;text-align:center}
+.ask{font-size:1.55rem;font-weight:600;text-align:center;margin:4px 0 6px;line-height:1.3}
+.ask .k{color:var(--grape);font-weight:700}
+.ask .t{display:inline-block;background:var(--sun);color:#2B2350;border-radius:12px;padding:0 10px;font-weight:700}
+.answer{margin-top:14px;border-radius:22px;padding:14px;background:var(--okbg);text-align:center}
+.answer .sol{font-size:2rem;font-weight:700;color:var(--ok);line-height:1.15;margin-bottom:10px;word-break:break-word}
+.mark{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.mark button{border:none;border-radius:22px;min-height:76px;font-size:1.45rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.mark button:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.mark .yes{background:var(--mint)} .mark .no{background:var(--bad)}
+.score2{display:flex;justify-content:center;gap:12px;margin:10px 0}
+.score2 div{border-radius:18px;padding:8px 16px;font-weight:700;font-size:1.3rem}
+.score2 .y{background:var(--okbg);color:var(--ok)} .score2 .n{background:var(--badbg);color:var(--bad)}
 .sfx{position:fixed;top:10px;right:10px;z-index:50;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.2);font-size:22px;cursor:pointer}
 </style>
 
@@ -273,7 +298,10 @@ const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=rnd(i+1);
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 let deck = [];
-function nextVerb(){ if(!deck.length) deck = shuffle(GROUPS[S.group]); return deck.pop(); }
+/* S.custom: lista de verbos para el repaso de fallos del examen; si es null se usa el grupo actual */
+const curList = () => (S.custom && S.custom.length) ? S.custom : GROUPS[S.group];
+const curLabel = () => S.custom ? `Repaso de fallos (${S.custom.length})` : `Grupo ${S.group+1}`;
+function nextVerb(){ if(!deck.length) deck = shuffle(curList()); return deck.pop(); }
 
 function regular(w){
   if(/e$/.test(w)) return w+"d";
@@ -361,7 +389,7 @@ const groupName = g => `${GROUPS[g][0].es} → ${GROUPS[g][GROUPS[g].length-1].e
 
 /* ---------- Inicio ---------- */
 function home(){
-  S.reviewing=false;
+  S.reviewing=false; S.custom=null; EX.on=false;
   const g=S.group, G=GROUPS[g];
   app.innerHTML = `
     <div class="hello">
@@ -379,7 +407,9 @@ function home(){
     </div>
     <div class="modes">
       ${Object.entries(MODES).map(([k,m])=>`<button class="mode ${m.cls}" data-m="${k}"><span class="ico">${m.ico}</span><b>${m.name}</b><span>${m.desc}</span></button>`).join("")}
-    </div>`;
+    </div>
+    ${examHomeHTML()}`;
+  bindExamHome();
   app.querySelectorAll(".mode").forEach(b=>b.onclick=()=>b.dataset.m==="review"?review(0):start(b.dataset.m));
   document.getElementById("gprev").onclick=()=>{setGroup(g-1);home();};
   document.getElementById("gnext").onclick=()=>{setGroup(g+1);home();};
@@ -387,7 +417,7 @@ function home(){
 }
 
 function start(mode){
-  deck = shuffle(GROUPS[S.group]);
+  deck = shuffle(curList());
   S = {...S, mode, len:deck.length, n:0, ok:0, streak:0, best:0, mistakes:[]};
   ask();
 }
@@ -400,7 +430,7 @@ function header(){
       <span class="title">${MODES[S.mode].ico} ${MODES[S.mode].name}</span>
     </div>
     <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
-    <div class="stats"><span>Grupo ${S.group+1} · Pregunta ${S.n+1} de ${S.len}</span><span>⭐ ${S.ok}${S.streak>=2?` <span class="fire">🔥 ${S.streak}</span>`:""}</span></div>`;
+    <div class="stats"><span>${curLabel()} · Pregunta ${S.n+1} de ${S.len}</span><span>⭐ ${S.ok}${S.streak>=2?` <span class="fire">🔥 ${S.streak}</span>`:""}</span></div>`;
 }
 
 function formsHTML(v){
@@ -546,6 +576,7 @@ function askWrite(v){
 
 /* ---------- Resultado ---------- */
 function finish(){
+  if(S.custom) return finishCustom();
   const g=S.group, all = S.ok===S.len, last = g===GROUPS.length-1;
   const stars = all?3: S.ok>=S.len-1?2: S.ok>=Math.ceil(S.len/2)?1:0;
   let msg;
@@ -573,14 +604,14 @@ function finish(){
 /* ---------- Repaso (de 5 en 5) ---------- */
 function review(i){
   S.reviewing=true; S.rIdx=i;
-  const G=GROUPS[S.group], v=G[i], pct=(i+1)/G.length*100;
+  const G=curList(), v=G[i], pct=(i+1)/G.length*100;
   app.innerHTML = `
     <div class="top">
       <button class="back" id="back">← Menú</button>
-      <span class="title">📖 Repaso · Grupo ${S.group+1}</span>
+      <span class="title">📖 Repaso · ${S.custom?"Fallos del examen":"Grupo "+(S.group+1)}</span>
     </div>
     <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
-    <div class="stats"><span>Verbo ${i+1} de ${G.length}</span><span>${esc(groupName(S.group))}</span></div>
+    <div class="stats"><span>Verbo ${i+1} de ${G.length}</span><span>${S.custom?"📝 Examen general":esc(groupName(S.group))}</span></div>
     <div class="q flash">
       <p class="prompt">🇪🇸 En español</p>
       <div class="es-big">${esc(v.es)}</div>
@@ -615,6 +646,7 @@ function review(i){
 }
 function reviewDone(){
   S.reviewing=false;
+  if(S.custom) return reviewDoneCustom();
   const g=S.group, last=g===GROUPS.length-1;
   confetti();
   app.innerHTML = `
@@ -635,10 +667,203 @@ function reviewDone(){
 }
 document.addEventListener("keydown",e=>{
   if(!S.reviewing) return;
-  const G=GROUPS[S.group];
+  const G=curList();
   if(e.key==="ArrowRight" && S.rIdx<G.length-1) review(S.rIdx+1);
   if(e.key==="ArrowLeft" && S.rIdx>0) review(S.rIdx-1);
 });
+
+/* ---------- EXAMEN GENERAL (con papá o mamá) ---------- */
+/* El adulto lee la pregunta, el niño contesta en voz alta, el adulto pulsa «Descubrir» y marca Bien/Mal. */
+const EX_KEY = "verbos-examen";
+const EX = {on:false, data:null, shown:false, len:0};
+const EX_TYPES = {
+  three:  v => ({ask:`¿Cómo se dice <span class="k">«${esc(v.es)}»</span> en inglés? Di <span class="t">los tres tiempos</span>.`, sol:`${v.inf} · ${v.ps} · ${v.pp}`}),
+  three2: v => ({ask:`Di <span class="t">los tres tiempos</span> de <span class="k">${esc(v.inf)}</span>.`, sol:`${v.inf} · ${v.ps} · ${v.pp}`}),
+  ps:     v => ({ask:`¿Cuál es el <span class="t">pasado simple</span> de <span class="k">${esc(v.inf)}</span>?`, sol:v.ps}),
+  pp:     v => ({ask:`¿Cuál es el <span class="t">participio</span> de <span class="k">${esc(v.inf)}</span>?`, sol:v.pp}),
+  es:     v => ({ask:`¿Qué significa <span class="k">${esc(v.inf)}</span>?`, sol:v.es}),
+  esps:   v => ({ask:`¿Cómo se dice <span class="k">«${esc(v.es)}»</span> en <span class="t">pasado simple</span>?`, sol:v.ps})
+};
+const EX_POOL = ["three","three","three","three2","ps","pp","es","esps"];
+function exLoad(){
+  try{
+    const d = JSON.parse(localStorage.getItem(EX_KEY)||"null");
+    if(d && Array.isArray(d.qs) && Array.isArray(d.marks) && d.qs.every(q=>V[q.i] && EX_TYPES[q.t])) return d;
+  }catch(e){}
+  return null;
+}
+function exSave(){ try{ localStorage.setItem(EX_KEY, JSON.stringify(EX.data)); }catch(e){} }
+const exWrong = d => { const seen=new Set(), out=[]; d.qs.forEach((q,k)=>{ if(d.marks[k]===false && !seen.has(q.i)){ seen.add(q.i); out.push(V[q.i]); } }); return out; };
+const exOk = d => d.marks.filter(m=>m===true).length;
+const exBad = d => d.marks.filter(m=>m===false).length;
+const fmtDate = t => { try{ return new Date(t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); }catch(e){ return ""; } };
+
+function examHomeHTML(){
+  const d = exLoad();
+  let info = "";
+  if(d && d.marks.length < d.qs.length){
+    info = `<div class="exam-info">⏸️ Examen a medias: pregunta ${d.marks.length+1} de ${d.qs.length} · ✅ ${exOk(d)} ❌ ${exBad(d)}
+      <div class="row2"><button class="go" id="exResume">Continuar ➜</button><button class="go alt" id="exNew">Empezar nuevo</button></div></div>`;
+  } else if(d){
+    const w = exWrong(d).length;
+    info = `<div class="exam-info">Último examen (${esc(fmtDate(d.end||d.start))}): ✅ ${exOk(d)} ❌ ${exBad(d)}${w?` · 📌 ${w} para estudiar`:" · ¡sin fallos! 🏆"}
+      <div class="row2"><button class="go alt" id="exSee">Ver resultados</button>${w?`<button class="go" id="exRev">Repasar fallos</button>`:`<button class="go" id="exNew">Examen nuevo</button>`}</div></div>`;
+  }
+  return `<button class="exam-card" id="exStart"><span class="ico">📝</span><b>EXAMEN GENERAL</b><span>Todos los verbos · para hacerlo con papá o mamá</span></button>${info}`;
+}
+function bindExamHome(){
+  const on = (id,f) => { const b=document.getElementById(id); if(b) b.onclick=f; };
+  on("exStart", examSetup); on("exNew", examSetup);
+  on("exResume", ()=>{ EX.data=exLoad(); examAsk(); });
+  on("exSee", ()=>{ EX.data=exLoad(); examResults(); });
+  on("exRev", ()=>{ EX.data=exLoad(); examReview(); });
+}
+function examSetup(){
+  S.reviewing=false; EX.on=true;
+  const opts = [[20,"20"],[40,"40"],[V.length,`Todos (${V.length})`]];
+  EX.len = EX.len || V.length;
+  const d = exLoad(), pending = d && d.marks.length < d.qs.length;
+  app.innerHTML = `
+    <div class="top"><button class="back" id="back">← Menú</button><span class="title">📝 Examen general</span></div>
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>Examen con papá o mamá</h1>
+      <p>El adulto lee la pregunta en voz alta y el peque contesta hablando.</p></div></div>
+    <div class="q">
+      <p class="prompt">Cómo funciona</p>
+      <ol style="margin:4px 0 12px;padding-left:22px;font-weight:500">
+        <li>Lee en voz alta lo que pone en la pantalla.</li>
+        <li>El peque contesta de viva voz.</li>
+        <li>Pulsa <b>«Descubrir»</b> para ver la respuesta.</li>
+        <li>Marca <b>✅ Bien</b> o <b>❌ Mal</b> y pasa a la siguiente.</li>
+      </ol>
+      <p class="prompt">¿Cuántas preguntas?</p>
+      <div class="lenpick">${opts.map(([n,l])=>`<button data-n="${n}" class="${n===EX.len?"on":""}">${l}</button>`).join("")}</div>
+      ${pending?`<p class="prompt" style="margin-top:10px">⚠️ Hay un examen a medias; si empiezas uno nuevo se sustituye.</p>`:""}
+      <button class="go" id="exGo">¡Empezar examen! ➜</button>
+    </div>`;
+  document.getElementById("back").onclick = home;
+  app.querySelectorAll(".lenpick button").forEach(b=>b.onclick=()=>{ EX.len=+b.dataset.n; app.querySelectorAll(".lenpick button").forEach(x=>x.classList.toggle("on",x===b)); });
+  document.getElementById("exGo").onclick = ()=>examStart(EX.len);
+}
+function examStart(n){
+  const verbs = shuffle(V).slice(0, Math.min(n, V.length));
+  EX.data = {start:Date.now(), qs:verbs.map(v=>({i:v.i, t:EX_POOL[rnd(EX_POOL.length)]})), marks:[]};
+  exSave(); examAsk();
+}
+function examAsk(){
+  S.reviewing=false; S.custom=null; EX.on=true; EX.shown=false;
+  const d = EX.data, k = d.marks.length;
+  if(k >= d.qs.length) return examResults();
+  const v = V[d.qs[k].i], q = EX_TYPES[d.qs[k].t](v), pct = k/d.qs.length*100;
+  app.innerHTML = `
+    <div class="top"><button class="back" id="back">← Menú</button><span class="title">📝 Examen general</span></div>
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>Pregunta ${k+1} de ${d.qs.length}</span><span>✅ ${exOk(d)} · ❌ ${exBad(d)}</span></div>
+    <div class="q">
+      <p class="parent">👨‍👩‍👧 Lee en voz alta:</p>
+      <p class="ask">${q.ask}</p>
+      <div id="exHidden"><button class="go eye" id="exShow">👁️ Descubrir</button></div>
+      <div id="exShown" hidden>
+        <div class="answer"><div class="sol">${esc(q.sol)}</div>${formsHTML(v)}<p style="margin:10px 0 0;font-weight:600">🇪🇸 ${esc(v.es)}</p></div>
+        <button class="go alt" id="exSay">🔊 Escuchar</button>
+        <p class="prompt" style="margin-top:14px">¿Lo ha dicho bien?</p>
+        <div class="mark"><button class="yes" id="exYes">✅ Bien</button><button class="no" id="exNo">❌ Mal</button></div>
+      </div>
+    </div>`;
+  document.getElementById("back").onclick = home;
+  document.getElementById("exSay").onclick = ()=>speak(v.inf+", "+v.ps+", "+v.pp);
+  document.getElementById("exShow").onclick = ()=>{
+    EX.shown=true;
+    document.getElementById("exHidden").hidden=true;
+    document.getElementById("exShown").hidden=false;
+    document.getElementById("exYes").focus();
+  };
+  document.getElementById("exYes").onclick = ()=>examMark(true);
+  document.getElementById("exNo").onclick = ()=>examMark(false);
+}
+function examMark(good){
+  const d = EX.data;
+  if(!EX.shown || d.marks.length >= d.qs.length) return;
+  EX.shown = false;
+  d.marks.push(good);
+  if(d.marks.length === d.qs.length) d.end = Date.now();
+  exSave();
+  good ? sfxOk() : sfxKo();
+  examAsk();
+}
+function examResults(){
+  S.reviewing=false; EX.on=false;
+  const d = EX.data, ok = exOk(d), bad = exBad(d), wrong = exWrong(d), total = d.qs.length;
+  const stars = bad===0?3: ok/total>=.8?2: ok/total>=.5?1:0;
+  if(!wrong.length) confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble">
+      <h1>${wrong.length?"¡Examen terminado! 📝":"¡Examen perfecto! 🏆"}</h1>
+      <p>${wrong.length?"Mira abajo los verbos que hay que estudiar.":"¡Enhorabuena! No has fallado ninguno. ¡Eres un campeón de los verbos!"}</p></div></div>
+    <div class="q end">
+      <div class="stars">${[0,1,2].map(k=>`<span class="${k<stars?"":"off"}">⭐</span>`).join("")}</div>
+      <div class="big">${ok} / ${total}</div>
+      <div class="score2"><div class="y">✅ ${ok} bien</div><div class="n">❌ ${bad} mal</div></div>
+      ${wrong.length?`<div class="mist"><h3>📌 Para estudiar (${wrong.length})</h3>
+        ${wrong.map(v=>`<div class="mrow"><div class="e">${esc(v.es)}</div><div class="f"><b>${esc(v.inf)}</b> · <b>${esc(v.ps)}</b> · <b>${esc(v.pp)}</b></div></div>`).join("")}
+      </div>
+      <button class="go" id="exRev">Generar REPASO solo de los que están mal 📖</button>`:""}
+      <button class="go alt" id="exNew">Empezar examen nuevo 📝</button>
+      <button class="go alt" id="menu">Volver al menú</button>
+    </div>`;
+  const r=document.getElementById("exRev"); if(r) r.onclick=examReview;
+  document.getElementById("exNew").onclick=examSetup;
+  document.getElementById("menu").onclick=home;
+}
+/* Repaso solo de los fallos: reutiliza el modo Repaso (y luego los juegos) con la lista filtrada */
+function examReview(){
+  const wrong = exWrong(EX.data||{qs:[],marks:[]});
+  if(!wrong.length) return examResults();
+  S.custom = wrong; deck = [];
+  review(0);
+}
+function customEndButtons(){
+  return `<button class="go alt" id="exBack">Ver resultados del examen 📝</button><button class="go alt" id="menu">Volver al menú</button>`;
+}
+function bindCustomEnd(){
+  document.getElementById("exBack").onclick=()=>{ S.custom=null; EX.data=exLoad(); examResults(); };
+  document.getElementById("menu").onclick=home;
+}
+function reviewDoneCustom(){
+  const n = S.custom.length;
+  confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>¡Has repasado los fallos! 🎉</h1><p>${n} verbo${n===1?"":"s"} del examen</p></div></div>
+    <div class="q end">
+      <p class="prompt">Ahora, ¡a practicarlos!</p>
+      <div class="modes" style="margin-top:8px">
+        ${["mix","three","write"].map(k=>`<button class="mode ${MODES[k].cls}" data-m="${k}"><span class="ico">${MODES[k].ico}</span><b>Jugar: ${MODES[k].name}</b><span>con estos ${n}</span></button>`).join("")}
+        <button class="mode m-review" id="again"><span class="ico">🔁</span><b>Repasar otra vez</b><span>los mismos ${n}</span></button>
+      </div>
+      ${customEndButtons()}
+    </div>`;
+  app.querySelectorAll(".mode[data-m]").forEach(b=>b.onclick=()=>start(b.dataset.m));
+  document.getElementById("again").onclick=()=>review(0);
+  bindCustomEnd();
+}
+function finishCustom(){
+  const all = S.ok===S.len;
+  if(all) confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>${all?"¡Todos bien! 🏆":`Tienes ${S.ok} de ${S.len}`}</h1>
+      <p>${all?"Ya te sabes los verbos que habías fallado.":"Sigue practicando los fallos del examen. ¡Tú puedes!"}</p></div></div>
+    <div class="q end">
+      <div class="big">${S.ok} / ${S.len}</div>
+      ${S.mistakes.length?`<div class="mist"><h3>📌 Aún por repasar</h3>
+        ${S.mistakes.map(v=>`<div class="mrow"><div class="e">${esc(v.es)}</div><div class="f"><b>${esc(v.inf)}</b> · <b>${esc(v.ps)}</b> · <b>${esc(v.pp)}</b></div></div>`).join("")}
+      </div>`:""}
+      <button class="go" id="again">Jugar otra vez 🔁</button>
+      <button class="go alt" id="rev">Repasar los fallos 📖</button>
+      ${customEndButtons()}
+    </div>`;
+  document.getElementById("again").onclick=()=>start(S.mode);
+  document.getElementById("rev").onclick=()=>review(0);
+  bindCustomEnd();
+}
 
 loadProgress();
 home();
