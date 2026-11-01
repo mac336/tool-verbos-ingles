@@ -251,6 +251,8 @@ function tone(freq, start, dur, type, vol){
   o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
 }
 function sfxOk(){ if(MUTED) return; try{ tone(659.25,0,.18,"sine",.3); tone(880,.12,.18,"sine",.3); tone(1318.5,.24,.35,"sine",.25); }catch(e){} }
+/* Ding suave al descubrir la respuesta del examen (distinto de OK/KO) */
+function sfxReveal(){ if(MUTED) return; try{ tone(1567.98,0,.5,"sine",.16); tone(3135.96,0,.25,"sine",.04); }catch(e){} }
 function sfxKo(){ if(MUTED) return; try{ tone(220,0,.22,"triangle",.3); tone(164.8,.18,.4,"triangle",.3); }catch(e){} }
 function paintSfx(){ const b=document.getElementById("sfx"); if(b){ b.textContent = MUTED?"🔇":"🔊"; b.setAttribute("aria-pressed", String(MUTED)); b.setAttribute("aria-label", MUTED?"Activar sonido":"Silenciar sonido"); } }
 document.addEventListener("DOMContentLoaded", paintSfx);
@@ -773,6 +775,7 @@ function examAsk(){
   document.getElementById("exSay").onclick = ()=>speak(v.inf+", "+v.ps+", "+v.pp);
   document.getElementById("exShow").onclick = ()=>{
     EX.shown=true;
+    sfxReveal();
     document.getElementById("exHidden").hidden=true;
     document.getElementById("exShown").hidden=false;
     document.getElementById("exYes").focus();
