@@ -207,7 +207,10 @@ select.jump{font:inherit;font-size:1rem;font-weight:600;border:3px solid var(--l
 .ask .k{color:var(--grape);font-weight:700}
 .ask .t{display:inline-block;background:var(--sun);color:#2B2350;border-radius:12px;padding:0 10px;font-weight:700}
 .answer{margin-top:14px;border-radius:22px;padding:14px;background:var(--okbg);text-align:center}
-.answer .sol{font-size:2rem;font-weight:700;color:var(--ok);line-height:1.15;margin-bottom:10px;word-break:break-word}
+.ex-es{text-align:center;font-size:2.4rem;font-weight:700;color:var(--mint);line-height:1.15;margin:4px 0 6px;word-break:break-word}
+.answer .forms{gap:10px}
+.answer .form{padding:14px 6px}
+.answer .form b{font-size:1.5rem}
 .mark{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 .mark button{border:none;border-radius:22px;min-height:76px;font-size:1.45rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.2)}
 .mark button:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
@@ -678,19 +681,12 @@ document.addEventListener("keydown",e=>{
 /* El adulto lee la pregunta, el niño contesta en voz alta, el adulto pulsa «Descubrir» y marca Bien/Mal. */
 const EX_KEY = "verbos-examen";
 const EX = {on:false, data:null, shown:false, len:0};
-const EX_TYPES = {
-  three:  v => ({ask:`¿Cómo se dice <span class="k">«${esc(v.es)}»</span> en inglés? Di <span class="t">los tres tiempos</span>.`, sol:`${v.inf} · ${v.ps} · ${v.pp}`}),
-  three2: v => ({ask:`Di <span class="t">los tres tiempos</span> de <span class="k">${esc(v.inf)}</span>.`, sol:`${v.inf} · ${v.ps} · ${v.pp}`}),
-  ps:     v => ({ask:`¿Cuál es el <span class="t">pasado simple</span> de <span class="k">${esc(v.inf)}</span>?`, sol:v.ps}),
-  pp:     v => ({ask:`¿Cuál es el <span class="t">participio</span> de <span class="k">${esc(v.inf)}</span>?`, sol:v.pp}),
-  es:     v => ({ask:`¿Qué significa <span class="k">${esc(v.inf)}</span>?`, sol:v.es}),
-  esps:   v => ({ask:`¿Cómo se dice <span class="k">«${esc(v.es)}»</span> en <span class="t">pasado simple</span>?`, sol:v.ps})
-};
-const EX_POOL = ["three","three","three","three2","ps","pp","es","esps"];
+/* Siempre: el verbo en español y el niño dice las tres formas (infinitivo, pasado, participio) */
+const exQuestion = v => ({es:v.es});
 function exLoad(){
   try{
     const d = JSON.parse(localStorage.getItem(EX_KEY)||"null");
-    if(d && Array.isArray(d.qs) && Array.isArray(d.marks) && d.qs.every(q=>V[q.i] && EX_TYPES[q.t])) return d;
+    if(d && Array.isArray(d.qs) && Array.isArray(d.marks) && d.qs.every(q=>V[q.i])) return d;
   }catch(e){}
   return null;
 }
@@ -732,10 +728,10 @@ function examSetup(){
     <div class="q">
       <p class="prompt">Cómo funciona</p>
       <ol style="margin:4px 0 12px;padding-left:22px;font-weight:500">
-        <li>Lee en voz alta lo que pone en la pantalla.</li>
-        <li>El peque contesta de viva voz.</li>
+        <li>Lee en voz alta el verbo en español.</li>
+        <li>El peque dice de viva voz sus <b>tres tiempos</b> en inglés (infinitivo, pasado y participio).</li>
         <li>Pulsa <b>«Descubrir»</b> para ver la respuesta.</li>
-        <li>Marca <b>✅ Bien</b> o <b>❌ Mal</b> y pasa a la siguiente.</li>
+        <li>Marca <b>✅ Bien</b> si ha dicho bien los tres, o <b>❌ Mal</b> si ha fallado alguno.</li>
       </ol>
       <p class="prompt">¿Cuántas preguntas?</p>
       <div class="lenpick">${opts.map(([n,l])=>`<button data-n="${n}" class="${n===EX.len?"on":""}">${l}</button>`).join("")}</div>
@@ -748,26 +744,28 @@ function examSetup(){
 }
 function examStart(n){
   const verbs = shuffle(V).slice(0, Math.min(n, V.length));
-  EX.data = {start:Date.now(), qs:verbs.map(v=>({i:v.i, t:EX_POOL[rnd(EX_POOL.length)]})), marks:[]};
+  EX.data = {start:Date.now(), qs:verbs.map(v=>({i:v.i, t:"three"})), marks:[]};
   exSave(); examAsk();
 }
 function examAsk(){
   S.reviewing=false; S.custom=null; EX.on=true; EX.shown=false;
   const d = EX.data, k = d.marks.length;
   if(k >= d.qs.length) return examResults();
-  const v = V[d.qs[k].i], q = EX_TYPES[d.qs[k].t](v), pct = k/d.qs.length*100;
+  const v = V[d.qs[k].i], q = exQuestion(v), pct = k/d.qs.length*100;
   app.innerHTML = `
     <div class="top"><button class="back" id="back">← Menú</button><span class="title">📝 Examen general</span></div>
     <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
     <div class="stats"><span>Pregunta ${k+1} de ${d.qs.length}</span><span>✅ ${exOk(d)} · ❌ ${exBad(d)}</span></div>
     <div class="q">
       <p class="parent">👨‍👩‍👧 Lee en voz alta:</p>
-      <p class="ask">${q.ask}</p>
+      <p class="ask">¿Cómo se dice en inglés? Di <span class="t">los tres tiempos</span>:</p>
+      <div class="ex-es">${esc(q.es)}</div>
+      <p class="prompt">infinitivo · pasado · participio</p>
       <div id="exHidden"><button class="go eye" id="exShow">👁️ Descubrir</button></div>
       <div id="exShown" hidden>
-        <div class="answer"><div class="sol">${esc(q.sol)}</div>${formsHTML(v)}<p style="margin:10px 0 0;font-weight:600">🇪🇸 ${esc(v.es)}</p></div>
+        <div class="answer reveal">${formsHTML(v)}</div>
         <button class="go alt" id="exSay">🔊 Escuchar</button>
-        <p class="prompt" style="margin-top:14px">¿Lo ha dicho bien?</p>
+        <p class="prompt" style="margin-top:14px">¿Ha dicho bien los tres?</p>
         <div class="mark"><button class="yes" id="exYes">✅ Bien</button><button class="no" id="exNo">❌ Mal</button></div>
       </div>
     </div>`;
