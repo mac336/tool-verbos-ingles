@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verbos irregulares</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#D9F1FF; --bg2:#BEE5FF; --card:#FFFFFF; --ink:#2B2350; --soft:#6B6491; --line:#E6E1FA;
+  --sun:#FFD23F; --grape:#7B5CFF; --mint:#2FC48D; --coral:#FF6B6B; --sky:#3B8EF0; --pink:#E8479A; --orange:#F2711C;
+  --okbg:#DFF8EC; --ok:#178A5E; --badbg:#FFE6E6; --bad:#D63A3A; --chip:#F3F0FF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B1F45; --bg2:#232860; --card:#2C3170; --ink:#F4F2FF; --soft:#B9B5E0; --line:#3E4488;
+    --okbg:#174A3C; --ok:#6DF0B9; --badbg:#5A2238; --bad:#FF9A9A; --chip:#363C80; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B1F45; --bg2:#232860; --card:#2C3170; --ink:#F4F2FF; --soft:#B9B5E0; --line:#3E4488;
+  --okbg:#174A3C; --ok:#6DF0B9; --badbg:#5A2238; --bad:#FF9A9A; --chip:#363C80; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 12% 8%, var(--bg2) 0 60px, transparent 61px),
+    radial-gradient(circle at 92% 22%, var(--bg2) 0 90px, transparent 91px),
+    radial-gradient(circle at 6% 70%, var(--bg2) 0 70px, transparent 71px),
+    radial-gradient(circle at 96% 92%, var(--bg2) 0 80px, transparent 81px);
+  background-attachment:fixed;
+  color:var(--ink); font-family:"Fredoka","Baloo 2","Comic Sans MS",system-ui,sans-serif;
+  font-size:19px; line-height:1.35; min-height:100vh;
+}
+.wrap{max-width:540px;margin:0 auto;padding:16px 14px 40px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--grape);outline-offset:3px}
+
+/* Mascota */
+.hello{display:flex;align-items:flex-end;gap:10px;margin:6px 0 18px}
+.owl{font-size:4.2rem;line-height:1;filter:drop-shadow(0 4px 0 rgba(0,0,0,.12));animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.bubble{background:var(--card);border-radius:22px 22px 22px 6px;padding:12px 16px;box-shadow:0 4px 0 var(--line);font-weight:500}
+.bubble h1{margin:0;font-size:1.7rem;line-height:1.1;font-weight:700}
+.bubble p{margin:2px 0 0;color:var(--soft)}
+
+/* Menú */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{
+  border:none;border-radius:26px;padding:16px 12px 14px;cursor:pointer;text-align:center;
+  color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s;
+}
+.mode:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.mode .ico{display:block;font-size:2.6rem;line-height:1.1}
+.mode b{display:block;font-size:1.2rem;font-weight:700;margin-top:4px}
+.mode span{display:block;font-size:.85rem;opacity:.95;line-height:1.25;margin-top:2px}
+.m-review{background:var(--mint)} .m-mix{background:var(--grape)} .m-three{background:var(--coral)} .m-write{background:#E0A800}
+.len{background:var(--card);border-radius:20px;padding:12px 14px;margin-top:16px;box-shadow:0 4px 0 var(--line);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.len span{flex:1 1 auto;font-weight:500}
+.len button{border:3px solid var(--line);background:var(--chip);border-radius:14px;padding:2px 14px;cursor:pointer;font-weight:600}
+.len button.on{border-color:var(--sun);background:var(--sun);color:#2B2350}
+
+/* Cabecera de juego */
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.back{border:none;background:var(--card);border-radius:16px;padding:6px 14px;cursor:pointer;font-weight:600;box-shadow:0 3px 0 var(--line)}
+.title{font-weight:700;font-size:1.1rem}
+.track{position:relative;height:18px;background:var(--card);border-radius:12px;margin:6px 26px 6px 0;box-shadow:inset 0 2px 0 var(--line)}
+.track i{display:block;height:100%;border-radius:12px;background:var(--sun);transition:width .4s}
+.track .rocket{position:absolute;top:50%;transform:translate(-30%,-55%);font-size:1.6rem;transition:left .4s}
+.stats{display:flex;justify-content:space-between;color:var(--soft);font-weight:500;margin:8px 0 14px}
+.stats .fire{color:var(--orange);font-weight:700}
+
+/* Tarjeta de pregunta */
+.q{background:var(--card);border-radius:30px;padding:22px 18px 20px;box-shadow:0 8px 0 var(--line)}
+.prompt{color:var(--soft);margin:0 0 4px;font-size:1.1rem;font-weight:500;text-align:center}
+.word{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:6px 0 18px;text-align:center}
+.word strong{font-size:2.6rem;font-weight:700;line-height:1.1;color:var(--grape);text-decoration:underline wavy var(--sun) 4px;text-underline-offset:10px}
+.speak{border:none;background:var(--chip);border-radius:50%;width:48px;height:48px;font-size:1.4rem;cursor:pointer;flex:none}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{
+  border:none;border-radius:20px;padding:14px 8px;min-height:64px;cursor:pointer;color:#fff;
+  font-size:1.2rem;font-weight:600;box-shadow:0 5px 0 rgba(0,0,0,.2);transition:transform .1s, opacity .2s;
+}
+.opt:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.opts .opt:nth-child(1){background:var(--sky)} .opts .opt:nth-child(2){background:var(--pink)}
+.opts .opt:nth-child(3){background:var(--orange)} .opts .opt:nth-child(4){background:var(--grape)}
+.opt:disabled{cursor:default;transform:none}
+.opt.dim{opacity:.3}
+.opt.ok{background:var(--mint)!important;opacity:1;animation:pop .35s}
+.opt.ok::after{content:" ✓"}
+.opt.bad{background:var(--bad)!important;opacity:1;animation:shake .4s}
+.opt.bad::after{content:" ✗"}
+@keyframes pop{50%{transform:scale(1.08)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* Tres tiempos */
+.group{border-radius:20px;padding:10px 10px 12px;margin-bottom:12px}
+.group h3{margin:0 0 8px 4px;font-size:1rem;font-weight:700}
+.g-inf{background:color-mix(in srgb,var(--sky) 14%,transparent)} .g-inf h3{color:var(--sky)}
+.g-ps{background:color-mix(in srgb,var(--pink) 14%,transparent)} .g-ps h3{color:var(--pink)}
+.g-pp{background:color-mix(in srgb,var(--orange) 14%,transparent)} .g-pp h3{color:var(--orange)}
+.opts.three{grid-template-columns:1fr 1fr;gap:8px}
+.opts.three .opt{background:var(--card)!important;color:var(--ink);font-size:1.1rem;min-height:52px;box-shadow:0 3px 0 var(--line);border:3px solid transparent}
+.g-inf .opt.sel{background:var(--sky)!important;color:#fff}
+.g-ps .opt.sel{background:var(--pink)!important;color:#fff}
+.g-pp .opt.sel{background:var(--orange)!important;color:#fff}
+.opts.three .opt.ok{background:var(--mint)!important;color:#fff}
+.opts.three .opt.bad{background:var(--bad)!important;color:#fff}
+
+/* Escribir */
+input[type=text]{
+  width:100%;font:inherit;font-size:1.8rem;font-weight:600;text-align:center;padding:12px 14px;border-radius:22px;
+  border:4px solid var(--line);background:var(--chip);color:var(--ink);
+}
+input[type=text]:focus{border-color:var(--grape);outline:none}
+input.ok{border-color:var(--mint)!important;background:var(--okbg)}
+input.bad{border-color:var(--bad)!important;background:var(--badbg);animation:shake .4s}
+.tense{display:inline-block;background:var(--sun);color:#2B2350;border-radius:12px;padding:0 10px;font-weight:700}
+
+/* Botones grandes */
+.go{
+  display:block;margin-top:16px;width:100%;border:none;border-radius:22px;padding:14px;cursor:pointer;
+  font-size:1.3rem;font-weight:700;background:var(--sun);color:#2B2350;box-shadow:0 6px 0 #D9A800;transition:transform .1s, box-shadow .1s;
+}
+.go:active{transform:translateY(5px);box-shadow:0 1px 0 #D9A800}
+.go.alt{background:var(--chip);color:var(--ink);box-shadow:0 6px 0 var(--line)}
+.go:disabled{opacity:.4;cursor:default;transform:none}
+
+/* Feedback */
+.fb{margin-top:18px;border-radius:22px;padding:14px 16px}
+.fb.ok{background:var(--okbg);color:var(--ok);font-weight:700;font-size:1.4rem;text-align:center}
+.fb.bad{background:var(--badbg)}
+.fb.bad .head{color:var(--bad);font-weight:700;font-size:1.15rem}
+.es{font-weight:600;margin:8px 0 10px;font-size:1.15rem}
+.forms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.form{border-radius:16px;padding:8px 6px;text-align:center;color:#fff}
+.form small{display:block;font-size:.75rem;opacity:.95;font-weight:500}
+.form b{display:block;font-size:1.2rem;font-weight:700;word-break:break-word}
+.f-inf{background:var(--sky)} .f-ps{background:var(--pink)} .f-pp{background:var(--orange)}
+
+/* Repaso */
+.flash .es-big{text-align:center;font-size:2.2rem;font-weight:700;color:var(--mint);margin:2px 0 16px;line-height:1.15}
+.flash .forms{gap:10px}
+.flash .form{padding:14px 6px}
+.flash .form b{font-size:1.45rem}
+.form.hid{opacity:.35}
+.form.hid b{font-size:1.8rem}
+.go.eye{font-size:1.4rem;padding:16px}
+.reveal .form{animation:pop .4s}
+.reveal .form:nth-child(2){animation-delay:.1s}
+.reveal .form:nth-child(3){animation-delay:.2s}
+[hidden]{display:none!important}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+select.jump{font:inherit;font-size:1rem;font-weight:600;border:3px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:2px 8px}
+
+/* Resultado */
+.end{text-align:center}
+.stars{font-size:3rem;letter-spacing:4px;margin:4px 0}
+.stars .off{filter:grayscale(1);opacity:.3}
+.big{font-size:3.6rem;font-weight:700;line-height:1;color:var(--grape)}
+.mist{text-align:left;margin-top:18px}
+.mist h3{margin:0 0 8px;font-size:1.15rem}
+.mrow{background:var(--chip);border-radius:16px;padding:8px 12px;margin-bottom:8px}
+.mrow .e{font-weight:600}
+.mrow .f{color:var(--soft)} .mrow .f b{color:var(--ink)}
+
+/* Confeti */
+.confetti{position:fixed;top:-40px;font-size:1.6rem;pointer-events:none;animation:fall 1.4s ease-in forwards;z-index:50}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.8}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.confetti{display:none}}
+/* Grupos */
+.gcard{background:var(--card);border-radius:26px;padding:14px;box-shadow:0 6px 0 var(--line);margin-bottom:16px}
+.gtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.gtitle{text-align:center;font-size:1.25rem}
+.badge{display:inline-block;font-size:.85rem;background:var(--okbg);color:var(--ok);border-radius:10px;padding:0 8px;font-weight:600}
+.arrow{border:none;background:var(--chip);border-radius:50%;width:46px;height:46px;font-size:1.8rem;font-weight:700;cursor:pointer;line-height:1;flex:none}
+.arrow:disabled{opacity:.3;cursor:default}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0}
+.chip{background:var(--grape);color:#fff;border-radius:14px;padding:4px 14px;font-weight:600;font-size:1.15rem}
+.dots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.dot{border:none;width:32px;height:32px;border-radius:50%;background:var(--chip);color:var(--soft);font-size:.85rem;font-weight:700;cursor:pointer}
+.dot.done{background:var(--mint);color:#fff}
+.dot.cur{outline:3px solid var(--sun);outline-offset:1px;color:var(--ink)}
+.dot.done.cur{color:#fff}
+/* Examen general */
+.exam-card{display:block;width:100%;margin-top:14px;border:none;border-radius:26px;padding:16px 14px;cursor:pointer;text-align:center;color:#fff;
+  background:linear-gradient(135deg,var(--sky),var(--grape));box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
+.exam-card:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.exam-card .ico{display:block;font-size:2.6rem;line-height:1.1}
+.exam-card b{display:block;font-size:1.45rem;font-weight:700;letter-spacing:.5px;margin-top:4px}
+.exam-card span{display:block;font-size:.9rem;opacity:.95;margin-top:2px}
+.exam-info{background:var(--card);border-radius:20px;padding:10px 14px;margin-top:12px;box-shadow:0 4px 0 var(--line);text-align:center;font-weight:500}
+.exam-info .row2 .go{margin-top:10px;font-size:1.05rem;padding:10px}
+.lenpick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
+.lenpick button{border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:1.1rem;min-height:52px}
+.lenpick button.on{border-color:var(--sun);background:var(--sun);color:#2B2350}
+.parent{background:var(--chip);border-radius:16px;padding:6px 12px;margin:0 0 12px;color:var(--soft);font-size:.95rem;text-align:center}
+.ask{font-size:1.55rem;font-weight:600;text-align:center;margin:4px 0 6px;line-height:1.3}
+.ask .k{color:var(--grape);font-weight:700}
+.ask .t{display:inline-block;background:var(--sun);color:#2B2350;border-radius:12px;padding:0 10px;font-weight:700}
+.answer{margin-top:14px;border-radius:22px;padding:14px;background:var(--okbg);text-align:center}
+.ex-q{font-size:1.9rem;margin:10px 0 8px}
+.ex-es{font-size:2.4rem;font-weight:700;color:var(--mint);word-break:break-word}
+.answer .forms{gap:10px}
+.answer .form{padding:14px 6px}
+.answer .form b{font-size:1.5rem}
+.mark{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.mark button{border:none;border-radius:22px;min-height:76px;font-size:1.45rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.mark button:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.mark .yes{background:var(--mint)} .mark .no{background:var(--bad)}
+.score2{display:flex;justify-content:center;gap:12px;margin:10px 0}
+.score2 div{border-radius:18px;padding:8px 16px;font-weight:700;font-size:1.3rem}
+.score2 .y{background:var(--okbg);color:var(--ok)} .score2 .n{background:var(--badbg);color:var(--bad)}
+.crumb{display:inline-block;margin:0 0 6px;padding:6px 14px;border-radius:16px;background:var(--card);box-shadow:0 3px 0 var(--line);color:var(--ink);text-decoration:none;font-weight:600}
+.sfx{position:fixed;top:10px;right:10px;z-index:50;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.2);font-size:22px;cursor:pointer}
+</style>
+
+</head>
+<body>
+<button class="sfx" id="sfx" aria-label="Sonido">🔊</button>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ---------- Sonidos OK/KO (Web Audio, sin ficheros) ---------- */
+let AC = null, MUTED = false;
+try{ MUTED = localStorage.getItem("verbos-mute")==="1"; }catch(e){}
+function audioCtx(){
+  try{
+    if(!AC){ const C = window.AudioContext||window.webkitAudioContext; if(!C) return null; AC = new C(); }
+    if(AC.state==="suspended") AC.resume();
+  }catch(e){ return null; }
+  return AC;
+}
+/* Desbloqueo en el primer toque (iOS/Android) con un buffer silencioso */
+function unlockAudio(){
+  const c = audioCtx(); if(!c) return;
+  try{ const b=c.createBuffer(1,1,22050), s=c.createBufferSource(); s.buffer=b; s.connect(c.destination); s.start(0); }catch(e){}
+  ["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(ev=>document.removeEventListener(ev,unlockAudio,true));
+}
+["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(ev=>document.addEventListener(ev,unlockAudio,true));
+function tone(freq, start, dur, type, vol){
+  const c = audioCtx(); if(!c) return;
+  const t = c.currentTime + start, o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function sfxOk(){ if(MUTED) return; try{ tone(659.25,0,.18,"sine",.3); tone(880,.12,.18,"sine",.3); tone(1318.5,.24,.35,"sine",.25); }catch(e){} }
+/* Ding suave al descubrir la respuesta del examen (distinto de OK/KO) */
+function sfxReveal(){ if(MUTED) return; try{ tone(1567.98,0,.5,"sine",.16); tone(3135.96,0,.25,"sine",.04); }catch(e){} }
+function sfxKo(){ if(MUTED) return; try{ tone(220,0,.22,"triangle",.3); tone(164.8,.18,.4,"triangle",.3); }catch(e){} }
+function paintSfx(){ const b=document.getElementById("sfx"); if(b){ b.textContent = MUTED?"🔇":"🔊"; b.setAttribute("aria-pressed", String(MUTED)); b.setAttribute("aria-label", MUTED?"Activar sonido":"Silenciar sonido"); } }
+document.addEventListener("DOMContentLoaded", paintSfx);
+setTimeout(()=>{ paintSfx(); const b=document.getElementById("sfx"); if(b) b.onclick=()=>{ MUTED=!MUTED; try{localStorage.setItem("verbos-mute",MUTED?"1":"0");}catch(e){} paintSfx(); if(!MUTED) sfxOk(); }; },0);
+
+const V = [
+["be","was/were","been","ser / estar"],["beat","beat","beaten","vencer / batir"],["become","became","become","convertirse en"],
+["begin","began","begun","empezar"],["bend","bent","bent","doblar"],["bite","bit","bitten","morder"],["blow","blew","blown","soplar"],
+["break","broke","broken","romper"],["bring","brought","brought","traer"],["build","built","built","construir"],
+["buy","bought","bought","comprar"],["catch","caught","caught","atrapar"],["choose","chose","chosen","elegir"],
+["come","came","come","venir"],["cost","cost","cost","costar"],["cut","cut","cut","cortar"],["deal","dealt","dealt","repartir / tratar"],
+["do","did","done","hacer (una acción)"],["drink","drank","drunk","beber"],["drive","drove","driven","conducir"],
+["eat","ate","eaten","comer"],["fall","fell","fallen","caer"],["feed","fed","fed","dar de comer"],["feel","felt","felt","sentir"],
+["fight","fought","fought","pelear"],["find","found","found","encontrar"],["forget","forgot","forgotten","olvidar"],
+["get","got","got","conseguir / obtener"],["give","gave","given","dar"],["go","went","gone","ir"],["grow","grew","grown","crecer"],
+["hang","hung","hung","colgar"],["have","had","had","tener"],["hear","heard","heard","oír"],["hit","hit","hit","golpear"],
+["hold","held","held","sostener"],["hurt","hurt","hurt","hacer daño / doler"],["keep","kept","kept","guardar / mantener"],
+["know","knew","known","saber"],["lead","led","led","guiar / dirigir"],["leave","left","left","irse / marcharse"],
+["lend","lent","lent","prestar"],["let","let","let","permitir / dejar"],["lie","lay","lain","tumbarse"],["lose","lost","lost","perder"],
+["make","made","made","fabricar / hacer (crear)"],["mean","meant","meant","significar"],["meet","met","met","conocer a alguien / quedar"],
+["pay","paid","paid","pagar"],["put","put","put","poner"],["read","read","read","leer"],["ride","rode","ridden","montar (en bici, a caballo)"],
+["ring","rang","rung","sonar / llamar por teléfono"],["run","ran","run","correr"],["say","said","said","decir"],["see","saw","seen","ver"],
+["sell","sold","sold","vender"],["send","sent","sent","enviar"],["set","set","set","colocar / fijar"],["shine","shone","shone","brillar"],
+["show","showed","shown","mostrar"],["sit","sat","sat","sentarse"],["sleep","slept","slept","dormir"],["speak","spoke","spoken","hablar"],
+["spend","spent","spent","gastar / pasar (tiempo)"],["spring","sprang","sprung","saltar / brotar"],["stand","stood","stood","estar de pie"],
+["steal","stole","stolen","robar"],["stick","stuck","stuck","pegar (con pegamento)"],["swim","swam","swum","nadar"],
+["take","took","taken","tomar / llevarse"],["teach","taught","taught","enseñar"],["tell","told","told","contar"],
+["think","thought","thought","pensar"],["tread","trod","trodden","pisar"],["understand","understood","understood","entender"],
+["wear","wore","worn","llevar puesto"],["win","won","won","ganar"],["write","wrote","written","escribir"]
+].map(([inf,ps,pp,es],i)=>({i,inf,ps,pp,es}));
+
+const TN = {inf:"infinitivo", ps:"pasado simple", pp:"participio"};
+const MODES = {
+  review:{ico:"📖", name:"Repaso", desc:"Mira los verbos uno a uno", cls:"m-review"},
+  mix:{ico:"🎲", name:"Sorpresa", desc:"Preguntas variadas con opciones", cls:"m-mix"},
+  three:{ico:"🧩", name:"Tres tiempos", desc:"Elige las tres formas", cls:"m-three"},
+  write:{ico:"✏️", name:"Escribe", desc:"Escribe el tiempo que se pide", cls:"m-write"}
+};
+const PRAISE = ["¡Genial! 🎉","¡Muy bien! 🌟","¡Eres un crack! 🚀","¡Bravo! 👏","¡Perfecto! 💯","¡Lo sabías! 😎"];
+
+let S = {len:5, rIdx:0, group:0, done:new Set()};
+const app = document.getElementById("app");
+const rnd = n => Math.floor(Math.random()*n);
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let deck = [];
+/* S.custom: lista de verbos para el repaso de fallos del examen; si es null se usa el grupo actual */
+const curList = () => (S.custom && S.custom.length) ? S.custom : GROUPS[S.group];
+const curLabel = () => S.custom ? `Repaso de fallos (${S.custom.length})` : `Grupo ${S.group+1}`;
+function nextVerb(){ if(!deck.length) deck = shuffle(curList()); return deck.pop(); }
+
+function regular(w){
+  if(/e$/.test(w)) return w+"d";
+  if(/[^aeiou]y$/.test(w)) return w.slice(0,-1)+"ied";
+  return w+"ed";
+}
+function formOptions(v, key){
+  const correct = v[key];
+  const pool = new Set();
+  if(key!=="inf"){
+    pool.add(regular(v.inf));
+    ["inf","ps","pp"].forEach(k=>pool.add(v[k]));
+    if(key==="pp") pool.add(v.ps.split("/")[0]+"en");
+  }
+  shuffle(V).slice(0,8).forEach(o=>{ if(o.i!==v.i) pool.add(o[key]); });
+  pool.delete(correct);
+  const bad = shuffle([...pool].filter(x=>x && x!==correct)).slice(0,3);
+  return shuffle([correct,...bad]);
+}
+const esOptions = v => shuffle([v.es,...shuffle(V.filter(o=>o.i!==v.i)).slice(0,3).map(o=>o.es)]);
+const infOptions = v => shuffle([v.inf,...shuffle(V.filter(o=>o.i!==v.i)).slice(0,3).map(o=>o.inf)]);
+
+/* Voz: busca la voz en inglés más natural que tenga el dispositivo */
+let VOICE = null;
+const NICE = ["Google UK English Female","Google US English","Samantha","Karen","Serena","Martha","Kate","Moira","Tessa","Stephanie","Microsoft Sonia","Microsoft Libby","Microsoft Aria","Microsoft Jenny","Daniel"];
+function pickVoice(){
+  try{
+    const vs = speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+    if(!vs.length) return;
+    const score = v => {
+      let s = 0;
+      if(/natural|neural|premium|enhanced|siri/i.test(v.name)) s += 100;
+      const k = NICE.findIndex(n=>v.name.includes(n)); if(k>=0) s += 50 - k;
+      if(/en-GB/i.test(v.lang)) s += 5; else if(/en-US/i.test(v.lang)) s += 4;
+      if(/compact|eloquence|novelty|whisper|bad news|bells|boing|bubbles|cellos|zarvox|trinoids|albert|fred|junior|ralph|jester|organ|superstar|grandpa|grandma|rocko|shelley|sandy|flo|reed|eddy/i.test(v.name)) s -= 200;
+      return s;
+    };
+    VOICE = vs.sort((a,b)=>score(b)-score(a))[0];
+  }catch(e){}
+}
+try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch(e){}
+/* Lee cada palabra por separado, despacio y con una pausa entre ellas */
+let speakRun = 0;
+function speak(t){
+  try{
+    speechSynthesis.cancel();
+    if(!VOICE) pickVoice();
+    const run = ++speakRun;
+    const parts = t.split(/,\s*/).flatMap(p=>p.split("/").map((w,k,a)=>k<a.length-1?w+" or":w)).filter(Boolean);
+    const say = i => {
+      if(run!==speakRun || i>=parts.length) return;
+      const u = new SpeechSynthesisUtterance(parts[i]);
+      if(VOICE){ u.voice = VOICE; u.lang = VOICE.lang; } else u.lang = "en-GB";
+      u.rate = .7; u.pitch = 1.1;
+      u.onend = () => setTimeout(()=>say(i+1), 700);
+      speechSynthesis.speak(u);
+    };
+    say(0);
+  }catch(e){}
+}
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const set=["⭐","🎉","✨","🌟","🎈"];
+  for(let k=0;k<14;k++){
+    const s=document.createElement("span"); s.className="confetti"; s.textContent=set[rnd(set.length)];
+    s.style.left=rnd(100)+"vw"; s.style.animationDelay=(Math.random()*.4)+"s";
+    document.body.appendChild(s); setTimeout(()=>s.remove(),2000);
+  }
+}
+
+/* ---------- Grupos de 5 ---------- */
+const GROUPS = [];
+for(let k=0;k<V.length;k+=5) GROUPS.push(V.slice(k,k+5));
+function loadProgress(){
+  try{ const p=JSON.parse(localStorage.getItem("verbos-progreso")||"{}");
+    S.group = Number.isInteger(p.group) && p.group<GROUPS.length ? p.group : 0;
+    S.done = new Set(Array.isArray(p.done)?p.done:[]);
+  }catch(e){ S.group=0; S.done=new Set(); }
+}
+function saveProgress(){
+  try{ localStorage.setItem("verbos-progreso", JSON.stringify({group:S.group, done:[...S.done]})); }catch(e){}
+}
+function setGroup(g){ S.group=Math.max(0,Math.min(GROUPS.length-1,g)); saveProgress(); }
+const groupName = g => `${GROUPS[g][0].es} → ${GROUPS[g][GROUPS[g].length-1].es}`;
+
+/* ---------- Inicio ---------- */
+function home(){
+  S.reviewing=false; S.custom=null; EX.on=false;
+  const g=S.group, G=GROUPS[g];
+  app.innerHTML = `
+    <a class="crumb" href="../../">🏠 Cursos</a>
+    <div class="hello">
+      <div class="owl" aria-hidden="true">🦉</div>
+      <div class="bubble"><h1>¡Hola! Vamos de 5 en 5</h1><p>Primero repasa, luego juega. Si aciertas los 5, pasas al siguiente grupo.</p></div>
+    </div>
+    <div class="gcard">
+      <div class="gtop">
+        <button class="arrow" id="gprev" aria-label="Grupo anterior" ${g===0?"disabled":""}>‹</button>
+        <div class="gtitle"><b>Grupo ${g+1} de ${GROUPS.length}</b>${S.done.has(g)?` <span class="badge">✅ superado</span>`:""}</div>
+        <button class="arrow" id="gnext" aria-label="Grupo siguiente" ${g===GROUPS.length-1?"disabled":""}>›</button>
+      </div>
+      <div class="chips">${G.map(v=>`<span class="chip">${esc(v.es)}</span>`).join("")}</div>
+      <div class="dots">${GROUPS.map((_,k)=>`<button class="dot ${S.done.has(k)?"done":""} ${k===g?"cur":""}" data-g="${k}" aria-label="Grupo ${k+1}">${S.done.has(k)?"✓":k+1}</button>`).join("")}</div>
+    </div>
+    <div class="modes">
+      ${Object.entries(MODES).map(([k,m])=>`<button class="mode ${m.cls}" data-m="${k}"><span class="ico">${m.ico}</span><b>${m.name}</b><span>${m.desc}</span></button>`).join("")}
+    </div>
+    ${examHomeHTML()}`;
+  bindExamHome();
+  app.querySelectorAll(".mode").forEach(b=>b.onclick=()=>b.dataset.m==="review"?review(0):start(b.dataset.m));
+  document.getElementById("gprev").onclick=()=>{setGroup(g-1);home();};
+  document.getElementById("gnext").onclick=()=>{setGroup(g+1);home();};
+  app.querySelectorAll(".dot").forEach(b=>b.onclick=()=>{setGroup(+b.dataset.g);home();});
+}
+
+function start(mode){
+  deck = shuffle(curList());
+  S = {...S, mode, len:deck.length, n:0, ok:0, streak:0, best:0, mistakes:[]};
+  ask();
+}
+
+function header(){
+  const pct = (S.n/S.len)*100;
+  return `
+    <div class="top">
+      <button class="back" id="back">← Menú</button>
+      <span class="title">${MODES[S.mode].ico} ${MODES[S.mode].name}</span>
+    </div>
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>${curLabel()} · Pregunta ${S.n+1} de ${S.len}</span><span>⭐ ${S.ok}${S.streak>=2?` <span class="fire">🔥 ${S.streak}</span>`:""}</span></div>`;
+}
+
+function formsHTML(v){
+  return `<div class="forms">
+    <div class="form f-inf"><small>Infinitivo</small><b>${esc(v.inf)}</b></div>
+    <div class="form f-ps"><small>Pasado</small><b>${esc(v.ps)}</b></div>
+    <div class="form f-pp"><small>Participio</small><b>${esc(v.pp)}</b></div>
+  </div>`;
+}
+function reviewCard(v, headline){
+  return `<div class="fb bad"><div class="head">${headline}</div>
+    <div class="es">🇪🇸 ${esc(v.es)}</div>${formsHTML(v)}</div>`;
+}
+function goodCard(){ confetti(); return `<div class="fb ok">${PRAISE[rnd(PRAISE.length)]}</div>`; }
+
+function ask(){
+  if(S.n>=S.len) return finish();
+  const v = nextVerb();
+  if(S.mode==="mix") askMix(v);
+  else if(S.mode==="three") askThree(v);
+  else askWrite(v);
+  document.getElementById("back").onclick = home;
+}
+function record(v, good){
+  good ? sfxOk() : sfxKo();
+  if(good){S.ok++;S.streak++;S.best=Math.max(S.best,S.streak);}
+  else{S.streak=0; if(!S.mistakes.some(m=>m.i===v.i)) S.mistakes.push(v);}
+  S.n++;
+}
+function nextBtn(){
+  const b = document.createElement("button");
+  b.className="go"; b.textContent = S.n>=S.len ? "Ver resultado 🏁" : "Siguiente ➜";
+  b.onclick = ask; return b;
+}
+
+/* ---------- Sorpresa ---------- */
+function askMix(v){
+  const types = [
+    {p:"¿Cómo se dice en inglés?", show:v.es, opts:infOptions(v), ans:v.inf, en:false},
+    {p:"¿Cuál es el pasado simple de…?", show:v.inf, opts:formOptions(v,"ps"), ans:v.ps, en:true},
+    {p:"¿Cuál es el participio de…?", show:v.inf, opts:formOptions(v,"pp"), ans:v.pp, en:true},
+    {p:"Está en pasado simple. ¿Qué significa?", show:v.ps, opts:esOptions(v), ans:v.es, en:true},
+    {p:"Está en participio. ¿Qué significa?", show:v.pp, opts:esOptions(v), ans:v.es, en:true},
+    {p:"¿Cómo se dice en pasado simple?", show:v.es, opts:formOptions(v,"ps"), ans:v.ps, en:false},
+    {p:"¿Cómo se dice en participio?", show:v.es, opts:formOptions(v,"pp"), ans:v.pp, en:false},
+    {p:"¿Cuál es el infinitivo de…?", show:Math.random()<.5?v.ps:v.pp, opts:infOptions(v), ans:v.inf, en:true}
+  ];
+  const t = types[rnd(types.length)];
+  app.innerHTML = header() + `
+    <div class="q">
+      <p class="prompt">${t.p}</p>
+      <div class="word"><strong>${esc(t.show)}</strong>${t.en?`<button class="speak" aria-label="Escuchar">🔊</button>`:""}</div>
+      <div class="opts">${t.opts.map(o=>`<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+      <div id="fb"></div>
+    </div>`;
+  const sp = app.querySelector(".speak"); if(sp) sp.onclick=()=>speak(t.show);
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const good = b.dataset.v===t.ans;
+    app.querySelectorAll(".opt").forEach(x=>{
+      x.disabled=true;
+      if(x.dataset.v===t.ans) x.classList.add("ok");
+      else if(x!==b) x.classList.add("dim");
+    });
+    if(!good) b.classList.add("bad");
+    record(v,good);
+    const fb = document.getElementById("fb");
+    fb.innerHTML = good ? goodCard() : reviewCard(v,`¡Casi! Era «${esc(t.ans)}». Vamos a repasarlo:`);
+    fb.appendChild(nextBtn());
+  });
+}
+
+/* ---------- Tres tiempos ---------- */
+function askThree(v){
+  const showKey = Math.random()<.5 ? "ps" : "pp";
+  const shown = v[showKey];
+  const groups = ["inf","ps","pp"].map(k=>({k, opts: k==="inf"?infOptions(v):formOptions(v,k)}));
+  const pick = {};
+  app.innerHTML = header() + `
+    <div class="q">
+      <p class="prompt">Está en ${TN[showKey]}. ¡Encuentra sus tres formas!</p>
+      <div class="word"><strong>${esc(shown)}</strong><button class="speak" aria-label="Escuchar">🔊</button></div>
+      ${groups.map(g=>`<div class="group g-${g.k}"><h3>${TN[g.k][0].toUpperCase()+TN[g.k].slice(1)}</h3>
+        <div class="opts three">${g.opts.map(o=>`<button class="opt" data-k="${g.k}" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div></div>`).join("")}
+      <button class="go" id="check" disabled>Comprobar ✔</button>
+      <div id="fb"></div>
+    </div>`;
+  app.querySelector(".speak").onclick=()=>speak(shown);
+  const check = document.getElementById("check");
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k; pick[k]=b.dataset.v;
+    app.querySelectorAll(`.opt[data-k="${k}"]`).forEach(x=>x.classList.toggle("sel",x===b));
+    check.disabled = Object.keys(pick).length<3;
+  });
+  check.onclick=()=>{
+    let good = true;
+    app.querySelectorAll(".opt").forEach(x=>{
+      x.disabled=true; x.classList.remove("sel");
+      const k=x.dataset.k;
+      if(x.dataset.v===v[k]) x.classList.add("ok");
+      else if(pick[k]===x.dataset.v){x.classList.add("bad"); good=false;}
+      else x.classList.add("dim");
+    });
+    check.remove();
+    record(v,good);
+    const fb=document.getElementById("fb");
+    fb.innerHTML = good ? goodCard() : reviewCard(v,`¡Casi! Alguna no era. Vamos a repasarlo:`);
+    fb.appendChild(nextBtn());
+  };
+}
+
+/* ---------- Escribe ---------- */
+const norm = s => s.toLowerCase().trim().replace(/\s+/g," ");
+function accepted(v,key){
+  const a = new Set([norm(v[key])]);
+  v[key].split("/").forEach(x=>a.add(norm(x)));
+  return a;
+}
+function askWrite(v){
+  const key = ["inf","ps","pp"][rnd(3)];
+  app.innerHTML = header() + `
+    <div class="q">
+      <p class="prompt">Escribe en inglés el <span class="tense">${TN[key]}</span> de:</p>
+      <div class="word"><strong>${esc(v.es)}</strong></div>
+      <input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="✏️ aquí…" aria-label="Tu respuesta">
+      <button class="go" id="check">Comprobar ✔</button>
+      <div id="fb"></div>
+    </div>`;
+  const inp=document.getElementById("ans"), check=document.getElementById("check");
+  inp.focus();
+  const go=()=>{
+    if(!inp.value.trim()){inp.focus();return;}
+    const good = accepted(v,key).has(norm(inp.value));
+    inp.disabled=true; inp.classList.add(good?"ok":"bad"); check.remove();
+    record(v,good);
+    const fb=document.getElementById("fb");
+    fb.innerHTML = good ? goodCard() : reviewCard(v,`¡Casi! Era «${esc(v[key])}». Vamos a repasarlo:`);
+    const n=nextBtn(); fb.appendChild(n); n.focus();
+    speak(v.inf+", "+v.ps+", "+v.pp);
+  };
+  check.onclick=go;
+  inp.onkeydown=e=>{if(e.key==="Enter")go();};
+}
+
+/* ---------- Resultado ---------- */
+function finish(){
+  if(S.custom) return finishCustom();
+  const g=S.group, all = S.ok===S.len, last = g===GROUPS.length-1;
+  const stars = all?3: S.ok>=S.len-1?2: S.ok>=Math.ceil(S.len/2)?1:0;
+  let msg;
+  if(all){ S.done.add(g); saveProgress(); confetti(); msg = last ? "¡Has terminado todos los verbos! 🏆" : `¡Grupo ${g+1} superado! 🏆`; }
+  else msg = `¡Casi! Tienes ${S.ok} de ${S.len}`;
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>${msg}</h1>
+      <p>${all ? (last?"¡Eres un campeón de los verbos!":"Ya puedes pasar a los siguientes 5 verbos.") : "Para pasar al siguiente grupo tienes que acertar los 5. ¡Tú puedes!"}</p></div></div>
+    <div class="q end">
+      <div class="stars">${[0,1,2].map(k=>`<span class="${k<stars?"":"off"}">⭐</span>`).join("")}</div>
+      <div class="big">${S.ok} / ${S.len}</div>
+      ${S.mistakes.length?`<div class="mist"><h3>📌 Para repasar</h3>
+        ${S.mistakes.map(v=>`<div class="mrow"><div class="e">${esc(v.es)}</div><div class="f"><b>${esc(v.inf)}</b> · <b>${esc(v.ps)}</b> · <b>${esc(v.pp)}</b></div></div>`).join("")}
+      </div>`:""}
+      ${all && !last ? `<button class="go" id="nextg">Siguientes 5 verbos ➜</button><button class="go alt" id="again">Jugar otra vez este grupo 🔁</button>`
+        : `<button class="go" id="again">Intentarlo otra vez 🔁</button>${all?"":`<button class="go alt" id="rev">Repasar estos 5 📖</button>`}`}
+      <button class="go alt" id="menu">Volver al menú</button>
+    </div>`;
+  document.getElementById("again").onclick=()=>start(S.mode);
+  document.getElementById("menu").onclick=home;
+  const n=document.getElementById("nextg"); if(n) n.onclick=()=>{setGroup(g+1);review(0);};
+  const r=document.getElementById("rev"); if(r) r.onclick=()=>review(0);
+}
+
+/* ---------- Repaso (de 5 en 5) ---------- */
+function review(i){
+  S.reviewing=true; S.rIdx=i;
+  const G=curList(), v=G[i], pct=(i+1)/G.length*100;
+  app.innerHTML = `
+    <div class="top">
+      <button class="back" id="back">← Menú</button>
+      <span class="title">📖 Repaso · ${S.custom?"Fallos del examen":"Grupo "+(S.group+1)}</span>
+    </div>
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>Verbo ${i+1} de ${G.length}</span><span>${S.custom?"📝 Examen general":esc(groupName(S.group))}</span></div>
+    <div class="q flash">
+      <p class="prompt">🇪🇸 En español</p>
+      <div class="es-big">${esc(v.es)}</div>
+      <div id="covered">
+        <div class="forms">
+          <div class="form f-inf hid"><small>Infinitivo</small><b>?</b></div>
+          <div class="form f-ps hid"><small>Pasado</small><b>?</b></div>
+          <div class="form f-pp hid"><small>Participio</small><b>?</b></div>
+        </div>
+        <p class="prompt" style="margin-top:14px">Dilos en tu cabeza… 🤔</p>
+        <button class="go eye" id="eye">👁️ Ver los tres tiempos</button>
+      </div>
+      <div id="shown" hidden>
+        <div class="reveal">${formsHTML(v)}</div>
+        <button class="go alt" id="say">🔊 Escuchar otra vez</button>
+      </div>
+      <div class="row2">
+        <button class="go alt" id="prev" ${i===0?"disabled":""}>← Anterior</button>
+        <button class="go" id="next">${i===G.length-1?"Terminar 🏁":"Siguiente ➜"}</button>
+      </div>
+    </div>`;
+  document.getElementById("back").onclick=home;
+  document.getElementById("say").onclick=()=>speak(v.inf+", "+v.ps+", "+v.pp);
+  document.getElementById("eye").onclick=()=>{
+    document.getElementById("covered").hidden=true;
+    document.getElementById("shown").hidden=false;
+    speak(v.inf+", "+v.ps+", "+v.pp);
+    document.getElementById("next").focus();
+  };
+  document.getElementById("prev").onclick=()=>review(i-1);
+  document.getElementById("next").onclick=()=> i===G.length-1 ? reviewDone() : review(i+1);
+}
+function reviewDone(){
+  S.reviewing=false;
+  if(S.custom) return reviewDoneCustom();
+  const g=S.group, last=g===GROUPS.length-1;
+  confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>¡Has repasado los 5! 🎉</h1><p>${esc(groupName(g))}</p></div></div>
+    <div class="q end">
+      <p class="prompt">¿Qué hacemos ahora?</p>
+      <div class="modes" style="margin-top:8px">
+        ${["mix","three","write"].map(k=>`<button class="mode ${MODES[k].cls}" data-m="${k}"><span class="ico">${MODES[k].ico}</span><b>Jugar: ${MODES[k].name}</b><span>con estos 5</span></button>`).join("")}
+        <button class="mode m-review" id="again"><span class="ico">🔁</span><b>Repasar otra vez</b><span>los mismos 5</span></button>
+      </div>
+      ${last?"":`<button class="go" id="nextg">Repasar los siguientes 5 ➜</button>`}
+      <button class="go alt" id="menu">Volver al menú</button>
+    </div>`;
+  app.querySelectorAll(".mode[data-m]").forEach(b=>b.onclick=()=>start(b.dataset.m));
+  document.getElementById("again").onclick=()=>review(0);
+  document.getElementById("menu").onclick=home;
+  const n=document.getElementById("nextg"); if(n) n.onclick=()=>{setGroup(g+1);review(0);};
+}
+document.addEventListener("keydown",e=>{
+  if(!S.reviewing) return;
+  const G=curList();
+  if(e.key==="ArrowRight" && S.rIdx<G.length-1) review(S.rIdx+1);
+  if(e.key==="ArrowLeft" && S.rIdx>0) review(S.rIdx-1);
+});
+
+/* ---------- EXAMEN GENERAL (con papá o mamá) ---------- */
+/* El adulto lee la pregunta, el niño contesta en voz alta, el adulto pulsa «Descubrir» y marca Bien/Mal. */
+const EX_KEY = "verbos-examen";
+const EX = {on:false, data:null, shown:false, len:0};
+/* Siempre: el verbo en español y el niño dice las tres formas (infinitivo, pasado, participio) */
+const exQuestion = v => ({es:v.es});
+function exLoad(){
+  try{
+    const d = JSON.parse(localStorage.getItem(EX_KEY)||"null");
+    if(d && Array.isArray(d.qs) && Array.isArray(d.marks) && d.qs.every(q=>V[q.i])) return d;
+  }catch(e){}
+  return null;
+}
+function exSave(){ try{ localStorage.setItem(EX_KEY, JSON.stringify(EX.data)); }catch(e){} }
+const exWrong = d => { const seen=new Set(), out=[]; d.qs.forEach((q,k)=>{ if(d.marks[k]===false && !seen.has(q.i)){ seen.add(q.i); out.push(V[q.i]); } }); return out; };
+const exOk = d => d.marks.filter(m=>m===true).length;
+const exBad = d => d.marks.filter(m=>m===false).length;
+const fmtDate = t => { try{ return new Date(t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); }catch(e){ return ""; } };
+
+function examHomeHTML(){
+  const d = exLoad();
+  let info = "";
+  if(d && d.marks.length < d.qs.length){
+    info = `<div class="exam-info">⏸️ Examen a medias: pregunta ${d.marks.length+1} de ${d.qs.length} · ✅ ${exOk(d)} ❌ ${exBad(d)}
+      <div class="row2"><button class="go" id="exResume">Continuar ➜</button><button class="go alt" id="exNew">Empezar nuevo</button></div></div>`;
+  } else if(d){
+    const w = exWrong(d).length;
+    info = `<div class="exam-info">Último examen (${esc(fmtDate(d.end||d.start))}): ✅ ${exOk(d)} ❌ ${exBad(d)}${w?` · 📌 ${w} para estudiar`:" · ¡sin fallos! 🏆"}
+      <div class="row2"><button class="go alt" id="exSee">Ver resultados</button>${w?`<button class="go" id="exRev">Repasar fallos</button>`:`<button class="go" id="exNew">Examen nuevo</button>`}</div></div>`;
+  }
+  return `<button class="exam-card" id="exStart"><span class="ico">📝</span><b>EXAMEN GENERAL</b><span>Todos los verbos · para hacerlo con papá o mamá</span></button>${info}`;
+}
+function bindExamHome(){
+  const on = (id,f) => { const b=document.getElementById(id); if(b) b.onclick=f; };
+  on("exStart", examSetup); on("exNew", examSetup);
+  on("exResume", ()=>{ EX.data=exLoad(); examAsk(); });
+  on("exSee", ()=>{ EX.data=exLoad(); examResults(); });
+  on("exRev", ()=>{ EX.data=exLoad(); examReview(); });
+}
+function examSetup(){
+  S.reviewing=false; EX.on=true;
+  const opts = [[20,"20"],[40,"40"],[V.length,`Todos (${V.length})`]];
+  EX.len = EX.len || V.length;
+  const d = exLoad(), pending = d && d.marks.length < d.qs.length;
+  app.innerHTML = `
+    <div class="top"><button class="back" id="back">← Menú</button><span class="title">📝 Examen general</span></div>
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>Examen con papá o mamá</h1>
+      <p>El adulto lee la pregunta en voz alta y el peque contesta hablando.</p></div></div>
+    <div class="q">
+      <p class="prompt">Cómo funciona</p>
+      <ol style="margin:4px 0 12px;padding-left:22px;font-weight:500">
+        <li>Lee en voz alta el verbo en español.</li>
+        <li>El peque dice de viva voz sus <b>tres tiempos</b> en inglés (infinitivo, pasado y participio).</li>
+        <li>Pulsa <b>«Descubrir»</b> para ver la respuesta.</li>
+        <li>Marca <b>✅ Bien</b> si ha dicho bien los tres, o <b>❌ Mal</b> si ha fallado alguno.</li>
+      </ol>
+      <p class="prompt">¿Cuántas preguntas?</p>
+      <div class="lenpick">${opts.map(([n,l])=>`<button data-n="${n}" class="${n===EX.len?"on":""}">${l}</button>`).join("")}</div>
+      ${pending?`<p class="prompt" style="margin-top:10px">⚠️ Hay un examen a medias; si empiezas uno nuevo se sustituye.</p>`:""}
+      <button class="go" id="exGo">¡Empezar examen! ➜</button>
+    </div>`;
+  document.getElementById("back").onclick = home;
+  app.querySelectorAll(".lenpick button").forEach(b=>b.onclick=()=>{ EX.len=+b.dataset.n; app.querySelectorAll(".lenpick button").forEach(x=>x.classList.toggle("on",x===b)); });
+  document.getElementById("exGo").onclick = ()=>examStart(EX.len);
+}
+function examStart(n){
+  const verbs = shuffle(V).slice(0, Math.min(n, V.length));
+  EX.data = {start:Date.now(), qs:verbs.map(v=>({i:v.i, t:"three"})), marks:[]};
+  exSave(); examAsk();
+}
+function examAsk(){
+  S.reviewing=false; S.custom=null; EX.on=true; EX.shown=false;
+  const d = EX.data, k = d.marks.length;
+  if(k >= d.qs.length) return examResults();
+  const v = V[d.qs[k].i], q = exQuestion(v), pct = k/d.qs.length*100;
+  app.innerHTML = `
+    <div class="top"><button class="back" id="back">← Menú</button><span class="title">📝 Examen general</span></div>
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>Pregunta ${k+1} de ${d.qs.length}</span><span>✅ ${exOk(d)} · ❌ ${exBad(d)}</span></div>
+    <div class="q">
+      <p class="parent">👨‍👩‍👧 Lee en voz alta:</p>
+      <p class="ask ex-q">DI LOS 3 TIEMPOS DE <span class="ex-es">${esc(q.es.toLocaleUpperCase("es-ES"))}</span></p>
+      <div id="exHidden"><button class="go eye" id="exShow">👁️ Descubrir</button></div>
+      <div id="exShown" hidden>
+        <div class="answer reveal">${formsHTML(v)}</div>
+        <button class="go alt" id="exSay">🔊 Escuchar</button>
+        <p class="prompt" style="margin-top:14px">¿Ha dicho bien los tres?</p>
+        <div class="mark"><button class="yes" id="exYes">✅ Bien</button><button class="no" id="exNo">❌ Mal</button></div>
+      </div>
+    </div>`;
+  document.getElementById("back").onclick = home;
+  document.getElementById("exSay").onclick = ()=>speak(v.inf+", "+v.ps+", "+v.pp);
+  document.getElementById("exShow").onclick = ()=>{
+    EX.shown=true;
+    sfxReveal();
+    document.getElementById("exHidden").hidden=true;
+    document.getElementById("exShown").hidden=false;
+    document.getElementById("exYes").focus();
+  };
+  document.getElementById("exYes").onclick = ()=>examMark(true);
+  document.getElementById("exNo").onclick = ()=>examMark(false);
+}
+function examMark(good){
+  const d = EX.data;
+  if(!EX.shown || d.marks.length >= d.qs.length) return;
+  EX.shown = false;
+  d.marks.push(good);
+  if(d.marks.length === d.qs.length) d.end = Date.now();
+  exSave();
+  good ? sfxOk() : sfxKo();
+  examAsk();
+}
+function examResults(){
+  S.reviewing=false; EX.on=false;
+  const d = EX.data, ok = exOk(d), bad = exBad(d), wrong = exWrong(d), total = d.qs.length;
+  const stars = bad===0?3: ok/total>=.8?2: ok/total>=.5?1:0;
+  if(!wrong.length) confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble">
+      <h1>${wrong.length?"¡Examen terminado! 📝":"¡Examen perfecto! 🏆"}</h1>
+      <p>${wrong.length?"Mira abajo los verbos que hay que estudiar.":"¡Enhorabuena! No has fallado ninguno. ¡Eres un campeón de los verbos!"}</p></div></div>
+    <div class="q end">
+      <div class="stars">${[0,1,2].map(k=>`<span class="${k<stars?"":"off"}">⭐</span>`).join("")}</div>
+      <div class="big">${ok} / ${total}</div>
+      <div class="score2"><div class="y">✅ ${ok} bien</div><div class="n">❌ ${bad} mal</div></div>
+      ${wrong.length?`<div class="mist"><h3>📌 Para estudiar (${wrong.length})</h3>
+        ${wrong.map(v=>`<div class="mrow"><div class="e">${esc(v.es)}</div><div class="f"><b>${esc(v.inf)}</b> · <b>${esc(v.ps)}</b> · <b>${esc(v.pp)}</b></div></div>`).join("")}
+      </div>
+      <button class="go" id="exRev">Generar REPASO solo de los que están mal 📖</button>`:""}
+      <button class="go alt" id="exNew">Empezar examen nuevo 📝</button>
+      <button class="go alt" id="menu">Volver al menú</button>
+    </div>`;
+  const r=document.getElementById("exRev"); if(r) r.onclick=examReview;
+  document.getElementById("exNew").onclick=examSetup;
+  document.getElementById("menu").onclick=home;
+}
+/* Repaso solo de los fallos: reutiliza el modo Repaso (y luego los juegos) con la lista filtrada */
+function examReview(){
+  const wrong = exWrong(EX.data||{qs:[],marks:[]});
+  if(!wrong.length) return examResults();
+  S.custom = wrong; deck = [];
+  review(0);
+}
+function customEndButtons(){
+  return `<button class="go alt" id="exBack">Ver resultados del examen 📝</button><button class="go alt" id="menu">Volver al menú</button>`;
+}
+function bindCustomEnd(){
+  document.getElementById("exBack").onclick=()=>{ S.custom=null; EX.data=exLoad(); examResults(); };
+  document.getElementById("menu").onclick=home;
+}
+function reviewDoneCustom(){
+  const n = S.custom.length;
+  confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>¡Has repasado los fallos! 🎉</h1><p>${n} verbo${n===1?"":"s"} del examen</p></div></div>
+    <div class="q end">
+      <p class="prompt">Ahora, ¡a practicarlos!</p>
+      <div class="modes" style="margin-top:8px">
+        ${["mix","three","write"].map(k=>`<button class="mode ${MODES[k].cls}" data-m="${k}"><span class="ico">${MODES[k].ico}</span><b>Jugar: ${MODES[k].name}</b><span>con estos ${n}</span></button>`).join("")}
+        <button class="mode m-review" id="again"><span class="ico">🔁</span><b>Repasar otra vez</b><span>los mismos ${n}</span></button>
+      </div>
+      ${customEndButtons()}
+    </div>`;
+  app.querySelectorAll(".mode[data-m]").forEach(b=>b.onclick=()=>start(b.dataset.m));
+  document.getElementById("again").onclick=()=>review(0);
+  bindCustomEnd();
+}
+function finishCustom(){
+  const all = S.ok===S.len;
+  if(all) confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">🦉</div><div class="bubble"><h1>${all?"¡Todos bien! 🏆":`Tienes ${S.ok} de ${S.len}`}</h1>
+      <p>${all?"Ya te sabes los verbos que habías fallado.":"Sigue practicando los fallos del examen. ¡Tú puedes!"}</p></div></div>
+    <div class="q end">
+      <div class="big">${S.ok} / ${S.len}</div>
+      ${S.mistakes.length?`<div class="mist"><h3>📌 Aún por repasar</h3>
+        ${S.mistakes.map(v=>`<div class="mrow"><div class="e">${esc(v.es)}</div><div class="f"><b>${esc(v.inf)}</b> · <b>${esc(v.ps)}</b> · <b>${esc(v.pp)}</b></div></div>`).join("")}
+      </div>`:""}
+      <button class="go" id="again">Jugar otra vez 🔁</button>
+      <button class="go alt" id="rev">Repasar los fallos 📖</button>
+      ${customEndButtons()}
+    </div>`;
+  document.getElementById("again").onclick=()=>start(S.mode);
+  document.getElementById("rev").onclick=()=>review(0);
+  bindCustomEnd();
+}
+
+loadProgress();
+home();
+</script>
+</body>
+</html>
