@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inglés 6º</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#D9F1FF; --bg2:#BEE5FF; --card:#FFFFFF; --ink:#2B2350; --soft:#6B6491; --line:#E6E1FA;
+  --sun:#FFD23F; --grape:#7B5CFF; --mint:#2FC48D; --coral:#FF6B6B; --sky:#3B8EF0; --pink:#E8479A; --orange:#F2711C; --clay:#B8642E;
+  --okbg:#DFF8EC; --ok:#178A5E; --badbg:#FFE6E6; --bad:#D63A3A; --chip:#F3F0FF; --part:#FFF4CC; --partink:#8A6A00;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B1F45; --bg2:#232860; --card:#2C3170; --ink:#F4F2FF; --soft:#C3BCE6; --line:#4C3F78; --clay:#F0A070;
+    --okbg:#174A3C; --ok:#6DF0B9; --badbg:#5A2238; --bad:#FF9A9A; --chip:#463A70; --part:#4D4220; --partink:#FFE38A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B1F45; --bg2:#232860; --card:#2C3170; --ink:#F4F2FF; --soft:#C3BCE6; --line:#4C3F78; --clay:#F0A070;
+  --okbg:#174A3C; --ok:#6DF0B9; --badbg:#5A2238; --bad:#FF9A9A; --chip:#463A70; --part:#4D4220; --partink:#FFE38A; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 12% 8%, var(--bg2) 0 60px, transparent 61px),
+    radial-gradient(circle at 92% 22%, var(--bg2) 0 90px, transparent 91px),
+    radial-gradient(circle at 6% 70%, var(--bg2) 0 70px, transparent 71px),
+    radial-gradient(circle at 96% 92%, var(--bg2) 0 80px, transparent 81px);
+  background-attachment:fixed;
+  color:var(--ink); font-family:"Fredoka","Baloo 2","Comic Sans MS",system-ui,sans-serif;
+  font-size:19px; line-height:1.35; min-height:100vh;
+}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--grape);outline-offset:3px}
+[hidden]{display:none!important}
+img{max-width:100%}
+
+.crumb{display:inline-block;margin:0 0 6px;padding:6px 14px;border-radius:16px;background:var(--card);box-shadow:0 3px 0 var(--line);color:var(--ink);text-decoration:none;font-weight:600}
+.hello{display:flex;align-items:flex-end;gap:10px;margin:6px 0 16px;padding-right:46px}
+.owl{font-size:4rem;line-height:1;filter:drop-shadow(0 4px 0 rgba(0,0,0,.12));animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.bubble{background:var(--card);border-radius:22px 22px 22px 6px;padding:12px 16px;box-shadow:0 4px 0 var(--line);font-weight:500}
+.bubble h1{margin:0;font-size:1.6rem;line-height:1.1;font-weight:700}
+.bubble p{margin:2px 0 0;color:var(--soft)}
+
+details.help{background:var(--card);border-radius:20px;padding:10px 14px;margin:0 0 14px;box-shadow:0 4px 0 var(--line)}
+details.help summary{cursor:pointer;font-weight:700}
+details.help ul{margin:8px 0 2px;padding-left:20px;font-size:.95rem}
+details.help li{margin-bottom:4px}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border:none;border-radius:26px;padding:16px 12px 14px;cursor:pointer;text-align:center;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
+.mode:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.mode .ico{display:block;font-size:2.6rem;line-height:1.1}
+.mode b{display:block;font-size:1.2rem;font-weight:700;margin-top:4px}
+.mode span{display:block;font-size:.85rem;opacity:.95;line-height:1.25;margin-top:2px}
+.m-study{background:var(--mint)} .m-flash{background:var(--grape)} .m-prac{background:var(--sky);grid-column:1/-1}
+.listen{border:none;background:var(--card);border-radius:14px;padding:4px 12px;margin-top:8px;cursor:pointer;font-weight:600;box-shadow:0 2px 0 var(--line)}
+.why{margin-top:6px;font-weight:500;color:var(--ink)}
+.exam-card{display:block;width:100%;margin-top:14px;border:none;border-radius:26px;padding:16px 14px;cursor:pointer;text-align:center;color:#fff;
+  background:linear-gradient(135deg,var(--orange),var(--pink));box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .12s, box-shadow .12s}
+.exam-card:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.exam-card .ico{display:block;font-size:2.6rem;line-height:1.1}
+.exam-card b{display:block;font-size:1.45rem;font-weight:700;letter-spacing:.5px;margin-top:4px}
+.exam-card span{display:block;font-size:.9rem;opacity:.95;margin-top:2px}
+.exam-info{background:var(--card);border-radius:20px;padding:10px 14px;margin-top:12px;box-shadow:0 4px 0 var(--line);text-align:center;font-weight:500}
+.exam-info .row2 .go{margin-top:10px;font-size:1.05rem;padding:10px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;padding-right:52px}
+.back{border:none;background:var(--card);border-radius:16px;padding:6px 14px;cursor:pointer;font-weight:600;box-shadow:0 3px 0 var(--line)}
+.title{font-weight:700;font-size:1.1rem;text-align:right}
+.track{position:relative;height:18px;background:var(--card);border-radius:12px;margin:6px 26px 6px 0;box-shadow:inset 0 2px 0 var(--line)}
+.track i{display:block;height:100%;border-radius:12px;background:var(--sun);transition:width .4s}
+.track .rocket{position:absolute;top:50%;transform:translate(-30%,-55%);font-size:1.6rem;transition:left .4s}
+.stats{display:flex;justify-content:space-between;color:var(--soft);font-weight:500;margin:8px 0 14px;gap:8px}
+
+.q{background:var(--card);border-radius:30px;padding:20px 18px;box-shadow:0 8px 0 var(--line)}
+.prompt{color:var(--soft);margin:0 0 4px;font-size:1.05rem;font-weight:500;text-align:center}
+.kind{display:block;width:max-content;margin:0 auto 8px;background:var(--chip);border-radius:12px;padding:2px 12px;font-size:.85rem;font-weight:700;color:var(--soft)}
+.ask{font-size:1.45rem;font-weight:600;text-align:center;margin:4px 0 14px;line-height:1.3}
+.ask .blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--grape);color:var(--grape)}
+.qimg{display:block;margin:0 auto 14px;max-height:300px;border-radius:18px;cursor:zoom-in;background:#fff}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opt{border:none;border-radius:20px;padding:12px 14px;min-height:60px;cursor:pointer;color:#fff;font-size:1.12rem;font-weight:600;box-shadow:0 5px 0 rgba(0,0,0,.2);transition:transform .1s, opacity .2s;text-align:center}
+.opt:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.opts .opt:nth-child(4n+1){background:var(--sky)} .opts .opt:nth-child(4n+2){background:var(--pink)}
+.opts .opt:nth-child(4n+3){background:var(--orange)} .opts .opt:nth-child(4n+4){background:var(--grape)}
+.opts.tf .opt:nth-child(1){background:var(--mint)} .opts.tf .opt:nth-child(2){background:var(--coral)}
+.opts.tf .opt{font-size:1.4rem;min-height:72px}
+.opt:disabled{cursor:default;transform:none}
+.opt.dim{opacity:.3}
+.opt.ok{background:var(--mint)!important;opacity:1;animation:pop .35s}
+.opt.ok::after{content:" ✓"}
+.opt.bad{background:var(--bad)!important;opacity:1;animation:shake .4s}
+.opt.bad::after{content:" ✗"}
+@keyframes pop{50%{transform:scale(1.05)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+input[type=text]{width:100%;font:inherit;font-size:1.6rem;font-weight:600;text-align:center;padding:10px 14px;border-radius:22px;border:4px solid var(--line);background:var(--chip);color:var(--ink)}
+input[type=text]:focus{border-color:var(--grape);outline:none}
+input.ok{border-color:var(--mint)!important;background:var(--okbg)}
+input.bad{border-color:var(--bad)!important;background:var(--badbg);animation:shake .4s}
+
+.go{display:block;margin-top:14px;width:100%;border:none;border-radius:22px;padding:14px;cursor:pointer;font-size:1.25rem;font-weight:700;background:var(--sun);color:#2B2350;box-shadow:0 6px 0 #D9A800;transition:transform .1s, box-shadow .1s}
+.go:active{transform:translateY(5px);box-shadow:0 1px 0 #D9A800}
+.go.alt{background:var(--chip);color:var(--ink);box-shadow:0 6px 0 var(--line)}
+.go.small{font-size:1rem;padding:10px}
+.go:disabled{opacity:.4;cursor:default;transform:none}
+.row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+
+.fb{margin-top:16px;border-radius:22px;padding:12px 16px}
+.fb.ok{background:var(--okbg);color:var(--ok);font-weight:700;font-size:1.3rem;text-align:center}
+.fb.bad{background:var(--badbg)}
+.fb.part{background:var(--part);color:var(--partink)}
+.fb .head{font-weight:700;font-size:1.15rem}
+.fb.bad .head{color:var(--bad)}
+.fb .right{font-weight:600;margin-top:4px}
+
+/* Unir */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:flex;flex-direction:column;gap:8px}
+.mt{border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:10px 8px;min-height:56px;cursor:pointer;font-weight:600;font-size:1rem;line-height:1.2;position:relative}
+.mt.sel{border-color:var(--grape);background:color-mix(in srgb,var(--grape) 18%,var(--chip))}
+.mt[data-p]{color:#fff;border-color:transparent}
+.mt[data-p]::before{content:attr(data-p);position:absolute;top:-8px;left:-6px;background:var(--card);color:var(--ink);border-radius:50%;width:24px;height:24px;font-size:.8rem;line-height:24px;box-shadow:0 2px 0 var(--line)}
+.p1{background:var(--sky)!important} .p2{background:var(--pink)!important} .p3{background:var(--orange)!important} .p4{background:var(--grape)!important} .p5{background:var(--clay)!important}
+.mt.okm{outline:4px solid var(--mint)} .mt.badm{outline:4px solid var(--bad)}
+.mres{margin-top:12px}
+.mres div{background:var(--chip);border-radius:14px;padding:6px 12px;margin-bottom:6px;font-size:1rem}
+
+/* Ordenar */
+.seq{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;min-height:40px;border:3px dashed var(--line);border-radius:18px;padding:8px}
+.seq .it{background:var(--sky);color:#fff;border-radius:14px;padding:8px 12px;font-weight:600}
+.seq .it b{display:inline-block;width:1.6em}
+.seq .it.okm{background:var(--mint)} .seq .it.badm{background:var(--bad)}
+.seq.words{flex-direction:row;flex-wrap:wrap;align-items:center;min-height:58px}
+.seq.words .it{padding:6px 10px}
+.seq.words.okm{border-color:var(--mint);border-style:solid} .seq.words.badm{border-color:var(--bad);border-style:solid}
+.hint{text-align:center;font-weight:600;color:var(--grape);margin:0 0 10px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.pool button{border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:10px 14px;min-height:52px;cursor:pointer;font-weight:600}
+
+/* Mapa */
+.map{position:relative;margin:0 auto 12px;border-radius:14px;overflow:hidden;background:#fff}
+.map img{display:block;width:100%;height:auto}
+.map svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pin{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:3px solid #fff;background:var(--grape);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.35);padding:0}
+.pin.okm{background:var(--mint)} .pin.badm{background:var(--bad)}
+.nums{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.nums button{border:none;border-radius:16px;min-height:56px;background:var(--grape);color:#fff;font-weight:700;font-size:1.3rem;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+
+/* Examen con el padre */
+.parent{background:var(--chip);border-radius:16px;padding:6px 12px;margin:0 0 12px;color:var(--soft);font-size:.95rem;text-align:center}
+.answer{margin-top:14px;border-radius:22px;padding:14px;background:var(--okbg);font-weight:500}
+.mark{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.mark button{border:none;border-radius:22px;min-height:72px;font-size:1.4rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.mark button:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.mark .yes{background:var(--mint)} .mark .no{background:var(--bad)}
+.lenpick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
+.lenpick button{border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:1.1rem;min-height:52px}
+.whole{display:block;width:100%;border:3px solid var(--line);background:var(--chip);border-radius:18px;padding:10px 14px;cursor:pointer;font-size:1.1rem;text-align:left;min-height:56px;margin-bottom:8px}
+.whole.on{border-color:var(--sun);background:color-mix(in srgb,var(--sun) 35%,var(--chip))}
+.whole small{color:var(--soft)}
+.secpick{display:flex;flex-direction:column;gap:6px}
+.secpick label{display:flex;align-items:center;gap:12px;border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:8px 12px;cursor:pointer;min-height:56px}
+.secpick label.on{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 16%,var(--chip))}
+.secpick input{width:26px;height:26px;flex:none;accent-color:var(--mint)}
+.secpick b{display:block;font-size:1rem;line-height:1.2}
+.secpick small{color:var(--soft);font-size:.85rem}
+.sectag{display:inline-block;background:var(--card);border-radius:10px;padding:0 8px;font-size:.8rem;font-weight:700;color:var(--orange);margin-bottom:2px}
+.bysec{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:var(--chip);border-radius:14px;padding:6px 12px;margin-bottom:6px;font-size:.95rem}
+.bysec b{font-size:1.2rem} .bysec b.pass{color:var(--ok)} .bysec b.fail{color:var(--bad)}
+.bysec small{color:var(--soft)}
+.lenpick button.on{border-color:var(--sun);background:var(--sun);color:#2B2350}
+.setup ol{margin:4px 0 12px;padding-left:22px;font-weight:500;font-size:1rem}
+.setup li{margin-bottom:4px}
+
+/* Resultado */
+.end{text-align:center}
+.stars{font-size:3rem;letter-spacing:4px;margin:4px 0}
+.stars .off{filter:grayscale(1);opacity:.3}
+.big{font-size:3.6rem;font-weight:700;line-height:1;color:var(--grape)}
+.big small{font-size:1.4rem;color:var(--soft)}
+.score2{display:flex;justify-content:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+.score2 div{border-radius:18px;padding:6px 14px;font-weight:700;font-size:1.1rem}
+.score2 .y{background:var(--okbg);color:var(--ok)} .score2 .n{background:var(--badbg);color:var(--bad)} .score2 .h{background:var(--part);color:var(--partink)}
+.mist{text-align:left;margin-top:18px}
+.mist h3{margin:0 0 8px;font-size:1.15rem}
+.mrow{background:var(--chip);border-radius:16px;padding:8px 12px;margin-bottom:8px;font-size:1rem}
+.mrow .e{font-weight:600}
+.mrow .f{color:var(--soft)} .mrow .f b{color:var(--ink)}
+
+/* Fichas */
+.fnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.arrow{border:none;background:var(--card);border-radius:50%;width:46px;height:46px;font-size:1.8rem;font-weight:700;cursor:pointer;line-height:1;flex:none;box-shadow:0 3px 0 var(--line)}
+.arrow:disabled{opacity:.3;cursor:default}
+.ftitle{text-align:center;font-weight:700;font-size:1.25rem;line-height:1.2}
+.ftitle small{display:block;color:var(--soft);font-weight:500;font-size:.9rem}
+.sect{background:var(--card);border-radius:24px;padding:14px 16px;box-shadow:0 6px 0 var(--line);margin-bottom:16px}
+.sect h2{margin:0 0 8px;font-size:1.15rem}
+.sect ul{margin:0;padding-left:20px}
+.sect li{margin-bottom:6px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gallery figure{margin:0;background:var(--chip);border-radius:16px;padding:6px;display:flex;flex-direction:column;gap:4px}
+.gallery figure.wide{grid-column:1/-1}
+.gallery img{width:100%;height:150px;object-fit:contain;background:#fff;border-radius:12px;cursor:zoom-in}
+.gallery figure.wide img{height:auto;max-height:420px}
+.gallery figcaption{font-size:.85rem;color:var(--soft);line-height:1.2;padding:0 2px 2px}
+table.voc{width:100%;border-collapse:collapse;font-size:1rem}
+table.voc td{padding:6px 4px;border-bottom:2px solid var(--line);vertical-align:top}
+table.voc td:first-child{font-weight:600;color:var(--grape);width:48%}
+table.voc button{border:none;background:none;cursor:pointer;font-size:1rem;padding:0 4px}
+.dates div{display:flex;gap:10px;padding:6px 0;border-bottom:2px solid var(--line);font-size:1rem}
+.dates b{flex:0 0 38%;color:var(--orange)}
+
+/* Tarjetas */
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:8px 0}
+.chips button{border:3px solid var(--line);background:var(--chip);border-radius:14px;padding:6px 12px;cursor:pointer;font-weight:600;min-height:46px}
+.chips button.on{border-color:var(--sun);background:var(--sun);color:#2B2350}
+.card{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.card .front{font-size:2.2rem;font-weight:700;color:var(--grape);line-height:1.15;word-break:break-word}
+.card .backs{font-size:1.9rem;font-weight:700;color:var(--mint);line-height:1.15;word-break:break-word}
+.speak{border:none;background:var(--chip);border-radius:50%;width:48px;height:48px;font-size:1.4rem;cursor:pointer;flex:none}
+
+/* Visor de imagen */
+.zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:60;padding:12px;cursor:zoom-out}
+.zoom img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
+
+.confetti{position:fixed;top:-40px;font-size:1.6rem;pointer-events:none;animation:fall 1.4s ease-in forwards;z-index:50}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.8}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.confetti{display:none}}
+.sfx{position:fixed;top:10px;right:10px;z-index:50;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.2);font-size:22px;cursor:pointer}
+@media (max-width:420px){ body{font-size:17px} .ask{font-size:1.25rem} .card .front{font-size:1.8rem} .gallery img{height:120px} .nums{grid-template-columns:repeat(3,1fr)} .pin{width:24px;height:24px;font-size:.75rem;border-width:2px} }
+</style>
+</head>
+<body>
+<button class="sfx" id="sfx" aria-label="Sonido">🔊</button>
+<div class="wrap" id="app"></div>
+<script src="data.js"></script>
+<script>
+/* ---------- Sonidos (mismos que la app de verbos; la preferencia de silencio es común) ---------- */
+let AC = null, MUTED = false;
+try{ MUTED = localStorage.getItem("verbos-mute")==="1"; }catch(e){}
+function audioCtx(){
+  try{
+    if(!AC){ const C = window.AudioContext||window.webkitAudioContext; if(!C) return null; AC = new C(); }
+    if(AC.state==="suspended") AC.resume();
+  }catch(e){ return null; }
+  return AC;
+}
+function unlockAudio(){
+  const c = audioCtx(); if(!c) return;
+  try{ const b=c.createBuffer(1,1,22050), s=c.createBufferSource(); s.buffer=b; s.connect(c.destination); s.start(0); }catch(e){}
+  ["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(ev=>document.removeEventListener(ev,unlockAudio,true));
+}
+["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(ev=>document.addEventListener(ev,unlockAudio,true));
+function tone(freq, start, dur, type, vol){
+  const c = audioCtx(); if(!c) return;
+  const t = c.currentTime + start, o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function sfxOk(){ if(MUTED) return; try{ tone(659.25,0,.18,"sine",.3); tone(880,.12,.18,"sine",.3); tone(1318.5,.24,.35,"sine",.25); }catch(e){} }
+function sfxReveal(){ if(MUTED) return; try{ tone(1567.98,0,.5,"sine",.16); tone(3135.96,0,.25,"sine",.04); }catch(e){} }
+function sfxKo(){ if(MUTED) return; try{ tone(220,0,.22,"triangle",.3); tone(164.8,.18,.4,"triangle",.3); }catch(e){} }
+function paintSfx(){ const b=document.getElementById("sfx"); if(b){ b.textContent = MUTED?"🔇":"🔊"; b.setAttribute("aria-pressed", String(MUTED)); b.setAttribute("aria-label", MUTED?"Activar sonido":"Silenciar sonido"); } }
+paintSfx();
+document.getElementById("sfx").onclick=()=>{ MUTED=!MUTED; try{localStorage.setItem("verbos-mute",MUTED?"1":"0");}catch(e){} paintSfx(); if(!MUTED) sfxOk(); };
+
+/* Voz en inglés para el vocabulario */
+let VOICE = null;
+function pickVoice(){
+  try{
+    const vs = speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+    if(!vs.length) return;
+    const score = v => (/natural|neural|premium|enhanced|siri/i.test(v.name)?100:0) + (/Google UK English Female|Google US English|Samantha|Serena|Kate|Microsoft Sonia|Microsoft Libby|Microsoft Aria|Microsoft Jenny|Daniel/.test(v.name)?50:0) + (/en-GB/i.test(v.lang)?5:/en-US/i.test(v.lang)?4:0) - (/compact|eloquence|novelty|whisper|zarvox|albert|fred|junior|ralph|jester|organ|superstar|grandpa|grandma/i.test(v.name)?200:0);
+    VOICE = vs.sort((a,b)=>score(b)-score(a))[0];
+  }catch(e){}
+}
+try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch(e){}
+function speak(t){
+  try{
+    speechSynthesis.cancel(); if(!VOICE) pickVoice();
+    const u = new SpeechSynthesisUtterance(t);
+    if(VOICE){ u.voice = VOICE; u.lang = VOICE.lang; } else u.lang = "en-GB";
+    u.rate = .8; speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- Utilidades ---------- */
+const app = document.getElementById("app");
+const H = window.HIST, META = H.meta, BANK = H.bank, SECS = Object.fromEntries(H.topic.sections.map(s=>[s.id,s])), CARDS = H.study.cards;
+const rnd = n => Math.floor(Math.random()*n);
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const pick = a => a[rnd(a.length)];
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const IMG = n => `img/${n}.webp`;
+const PRAISE = ["Great! 🎉","Well done! 🌟","Excellent! 🚀","Bravo! 👏","Perfect! 💯","You knew it! 😎"];
+const $ = id => document.getElementById(id);
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const set=["⭐","🎉","✨","🌟","🎈"];
+  for(let k=0;k<14;k++){
+    const s=document.createElement("span"); s.className="confetti"; s.textContent=set[rnd(set.length)];
+    s.style.left=rnd(100)+"vw"; s.style.animationDelay=(Math.random()*.4)+"s";
+    document.body.appendChild(s); setTimeout(()=>s.remove(),2000);
+  }
+}
+/* Ampliar cualquier imagen al tocarla */
+document.addEventListener("click", e=>{
+  const im = e.target.closest("img[data-zoom]"); if(!im) return;
+  const z = document.createElement("div"); z.className="zoom"; z.innerHTML=`<img src="${im.getAttribute("src")}" alt="">`;
+  z.onclick=()=>z.remove(); document.body.appendChild(z);
+});
+const topBar = (title, back="← Menu") => `<div class="top"><button class="back" id="back">${back}</button><span class="title">${title}</span></div>`;
+const bindBack = (f=home) => { $("back").onclick = f; };
+
+/* Vocabulario y fechas de cada ficha (sin repetir) */
+function vocabOf(sectionIds){
+  const seen = new Set(), out = [];
+  sectionIds.forEach(id => (SECS[id].vocabulary||[]).forEach(v => { const k=v.en.toLowerCase(); if(!seen.has(k)){ seen.add(k); out.push(v); } }));
+  return out;
+}
+function datesOf(sectionIds){
+  const out = [];
+  sectionIds.forEach(id => (SECS[id].dates||[]).forEach(d => { if(!/\bmap\b/i.test(d.what)) out.push(d); }));
+  return out;
+}
+const ALL_SECS = CARDS.flatMap(c=>c.sections);
+const ALL_VOCAB = vocabOf(ALL_SECS);
+const clean = s => String(s).replace(/\s*\((as written|added)[^)]*\)/gi,"");
+
+/* ---------- Inicio ---------- */
+function home(){
+  window.scrollTo(0,0);
+  app.innerHTML = `
+    <a class="crumb" href="${META.back.href}">${META.back.label}</a>
+    <div class="hello">
+      <div class="owl" aria-hidden="true">${META.mascot}</div>
+      <div class="bubble"><h1>${esc(META.title)}</h1><p>${esc(META.subtitle)}</p></div>
+    </div>
+    <details class="help">
+      <summary>👨‍👩‍👧 Para papá o mamá (cómo se usa)</summary>
+      <ul>
+        <li><b>Fichas</b>: una por sección, en el mismo orden que el libro (${CARDS.length} secciones), con las reglas en inglés, las imágenes (tócalas para ampliarlas) y el vocabulario inglés → español con su pronunciación 🔊.</li>
+        <li><b>Practice</b>: ejercicios de la sección para estudiar. Se corrigen al momento y explican la respuesta; no hay nota y se pueden repetir.</li>
+        <li><b>Tarjetas</b>: repaso de vocabulario y fechas. Se ve la palabra, se intenta decir el significado y se pulsa «Turn». Si lo sabía, «I knew it»; si no, «Again» y vuelve a salir.</li>
+        <li><b>Examen</b>: eliges una sección, varias o toda la unidad; preguntas en inglés desordenadas y distintas cada vez (tipo test, verdadero/falso, huecos, unir, ordenar, mapa e imágenes). La mayoría se corrigen solas. En las <b>preguntas abiertas</b> el peque contesta en voz alta, tú pulsas «Descubrir» y marcas ✅ o ❌. En los huecos, si escribe la respuesta con una falta pequeña, puedes darla por buena.</li>
+        <li>Al final sale la <b>nota sobre 10</b> y la lista de lo que hay que repasar, con un botón para repetir solo los fallos.</li>
+        <li>${esc(META.source)}</li>
+      </ul>
+    </details>
+    <div class="modes">
+      <button class="mode m-study" id="mStudy"><span class="ico">📖</span><b>Study cards</b><span>Fichas: summary, pictures, vocabulary</span></button>
+      <button class="mode m-flash" id="mFlash"><span class="ico">🃏</span><b>Flashcards</b><span>Tarjetas de vocabulario</span></button>
+      <button class="mode m-prac" id="mPrac"><span class="ico">✏️</span><b>Practice</b><span>Ejercicios por sección · corrección al momento, sin nota</span></button>
+    </div>
+    ${examHomeHTML()}`;
+  $("mStudy").onclick = ()=>study(0);
+  $("mFlash").onclick = flashSetup;
+  $("mPrac").onclick = practiceSetup;
+  bindExamHome();
+}
+
+/* ---------- Fichas ---------- */
+function study(i){
+  window.scrollTo(0,0);
+  const c = CARDS[i], voc = vocabOf(c.sections), dates = datesOf(c.sections);
+  app.innerHTML = `
+    ${topBar("📖 Study cards")}
+    <div class="fnav">
+      <button class="arrow" id="prev" aria-label="Previous" ${i===0?"disabled":""}>‹</button>
+      <div class="ftitle">${c.ico} ${esc(c.title)}<small>Section ${i+1} of ${CARDS.length} · p. ${esc(c.pages)}</small></div>
+      <button class="arrow" id="next" aria-label="Next" ${i===CARDS.length-1?"disabled":""}>›</button>
+    </div>
+    <div class="sect"><h2>📝 Summary</h2><ul>${c.summary.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
+    ${c.images.length?`<div class="sect"><h2>🖼️ Pictures</h2><div class="gallery">
+      ${c.images.map(im=>`<figure class="${im.wide?"wide":""}"><img loading="lazy" data-zoom src="${IMG(im.src)}" alt="${esc(im.caption)}"><figcaption>${esc(im.caption)}</figcaption></figure>`).join("")}
+    </div></div>`:""}
+    <div class="sect"><h2>🔤 Key vocabulary</h2><table class="voc">
+      ${voc.map(v=>`<tr><td>${esc(v.en)} <button data-say="${esc(v.en)}" aria-label="Listen">🔊</button></td><td>${esc(v.es)}</td></tr>`).join("")}
+    </table></div>
+    ${dates.length?`<div class="sect dates"><h2>🗓️ Dates</h2>${dates.map(d=>`<div><b>${esc(clean(d.when))}</b><span>${esc(d.what)}</span></div>`).join("")}</div>`:""}
+    <div class="row2">
+      <button class="go alt" id="fl">🃏 Flashcards</button>
+      <button class="go alt" id="pr">✏️ Practice</button>
+      <button class="go" id="nx">${i===CARDS.length-1?"Go to the exam 📝":"Next card ➜"}</button>
+    </div>`;
+  bindBack();
+  $("prev").onclick=()=>study(i-1);
+  $("next").onclick=()=>study(i+1);
+  $("fl").onclick=()=>flashStart(c.id,"en");
+  $("pr").onclick=()=>practiceStart([c.id]);
+  $("nx").onclick=()=> i===CARDS.length-1 ? examSetup() : study(i+1);
+  app.querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>speak(b.dataset.say));
+}
+
+/* ---------- Tarjetas ---------- */
+const FL = {deck:"all", dir:"en"};
+function flashSetup(){
+  window.scrollTo(0,0);
+  const decks = [["all","All vocabulary"], ...CARDS.map((c,i)=>[c.id, `${i+1}. ${c.title}`]), ...(ALL_SECS.some(id=>(SECS[id].dates||[]).length)?[["dates","🗓️ Dates"]]:[])];
+  app.innerHTML = `
+    ${topBar("🃏 Flashcards")}
+    <div class="q setup">
+      <p class="prompt">Choose the cards</p>
+      <div class="chips" id="decks">${decks.map(([k,l])=>`<button data-k="${k}" class="${k===FL.deck?"on":""}">${esc(l)}</button>`).join("")}</div>
+      <p class="prompt" style="margin-top:10px">Direction</p>
+      <div class="chips" id="dirs"><button data-k="en" class="${FL.dir==="en"?"on":""}">English → Español</button><button data-k="es" class="${FL.dir==="es"?"on":""}">Español → English</button></div>
+      <button class="go" id="goFl">Start ➜</button>
+    </div>`;
+  bindBack();
+  const chips = (id,key) => $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{ FL[key]=b.dataset.k; $(id).querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); });
+  chips("decks","deck"); chips("dirs","dir");
+  $("goFl").onclick=()=>flashStart(FL.deck, FL.dir);
+}
+function flashItems(deck){
+  if(deck==="dates"){
+    const seen=new Set();
+    return [...ALL_SECS.flatMap(id=>SECS[id].dates||[]), ...(H.topic.timeline||[])].filter(d=>{ const k=d.what.toLowerCase(); if(/\bmap\b/.test(k)) return false; if(seen.has(k)) return false; seen.add(k); return true; })
+      .map(d=>({front:d.what, back:clean(d.when), en:false}));
+  }
+  const list = deck==="all" ? ALL_VOCAB : vocabOf(CARDS.find(c=>c.id===deck).sections);
+  return list.map(v=>({front:v.en, back:v.es, en:true}));
+}
+let FS = null;
+function flashStart(deck, dir){
+  FL.deck = deck; FL.dir = dir;
+  const items = flashItems(deck).map(it => (dir==="es" && it.en) ? {front:it.back, back:it.front, en:false, say:it.front} : {...it, say: it.en?it.front:null});
+  FS = {queue:shuffle(items), total:items.length, known:0, again:0};
+  flashCard();
+}
+function flashCard(){
+  if(!FS.queue.length) return flashEnd();
+  const it = FS.queue[0], done = FS.known, pct = done/FS.total*100;
+  app.innerHTML = `
+    ${topBar("🃏 Flashcards")}
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>✅ ${FS.known} of ${FS.total}</span><span>🔁 ${FS.again}</span></div>
+    <div class="q card">
+      <div class="front">${esc(it.front)}</div>
+      ${it.en?`<button class="speak" id="say" aria-label="Listen">🔊</button>`:""}
+      <div id="backside" hidden><div class="backs">${esc(it.back)}</div>${(!it.en && it.say)?`<button class="speak" id="say2" aria-label="Listen">🔊</button>`:""}</div>
+    </div>
+    <button class="go" id="turn">👁️ Turn</button>
+    <div class="row2" id="judge" hidden><button class="go alt" id="again">🔁 Again</button><button class="go" id="knew">✅ I knew it</button></div>`;
+  bindBack();
+  if($("say")) $("say").onclick=()=>speak(it.front);
+  $("turn").onclick=()=>{ $("backside").hidden=false; $("turn").hidden=true; $("judge").hidden=false; sfxReveal(); if($("say2")) $("say2").onclick=()=>speak(it.say); };
+  $("knew").onclick=()=>{ FS.queue.shift(); FS.known++; sfxOk(); flashCard(); };
+  $("again").onclick=()=>{ const x=FS.queue.shift(); FS.again++; FS.queue.splice(Math.min(FS.queue.length, 3+rnd(3)),0,x); flashCard(); };
+}
+function flashEnd(){
+  confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>All cards done! 🎉</h1><p>${FS.total} cards · ${FS.again} repeated</p></div></div>
+    <button class="go" id="re">Play again 🔁</button>
+    <button class="go alt" id="other">Other cards</button>
+    <button class="go alt" id="menu">Menu</button>`;
+  $("re").onclick=()=>flashStart(FL.deck, FL.dir);
+  $("other").onclick=flashSetup;
+  $("menu").onclick=home;
+}
+
+/* ---------- EXAMEN ---------- */
+const EX_KEY = META.key + "-exam";
+const KIND = {mc:"Multiple choice", pic:"Picture question", tf:"True or false", gap:"Fill in the gap", match:"Match", order:"Put in order", spot:"Picture", open:"Open question", build:"Make the sentence"};
+const BYID = Object.fromEntries(BANK.questions.map(q=>[q.id,q]));
+const famOf = q => q.t==="mc" ? (q.img?"pic":"mc") : (q.t==="spot"||q.t==="order") ? "pic" : q.t;
+/* Secciones (orden del PDF) */
+const SECNO = Object.fromEntries(CARDS.map((c,i)=>[c.id,i+1]));
+const secLabel = g => `${SECNO[g]}. ${CARDS[SECNO[g]-1].title}`;
+const SPOT_MAX = 3;
+let EX = {data:null};
+function exLoad(){
+  try{
+    const d = JSON.parse(localStorage.getItem(EX_KEY)||"null");
+    if(d && Array.isArray(d.qs) && Array.isArray(d.res) && d.qs.every(q=>BYID[q.id])) return d;
+  }catch(e){}
+  return null;
+}
+function exSave(){ if(EX.data && EX.data.practice) return; try{ localStorage.setItem(EX_KEY, JSON.stringify(EX.data)); }catch(e){} }
+const pts = d => d.res.reduce((s,r)=>s+r.pts,0);
+const grade = d => Math.round(pts(d)/d.qs.length*100)/10;
+const fmtG = g => g.toLocaleString("es-ES",{maximumFractionDigits:1});
+const fmtDate = t => { try{ return new Date(t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); }catch(e){ return ""; } };
+
+function examHomeHTML(){
+  const d = exLoad(); let info = "";
+  if(d && d.res.length < d.qs.length){
+    info = `<div class="exam-info">⏸️ Examen a medias: pregunta ${d.res.length+1} de ${d.qs.length}
+      <div class="row2"><button class="go" id="exResume">Continue ➜</button><button class="go alt" id="exNew">New exam</button></div></div>`;
+  } else if(d){
+    info = `<div class="exam-info">Último examen (${esc(fmtDate(d.end||d.start))}): nota <b>${fmtG(grade(d))}</b> / 10
+      <div class="row2"><button class="go alt" id="exSee">Ver resultados</button><button class="go" id="exNew">New exam</button></div></div>`;
+  }
+  return `<button class="exam-card" id="exStart"><span class="ico">📝</span><b>EXAM</b><span>Random questions in English · nota sobre 10</span></button>${info}`;
+}
+function bindExamHome(){
+  const on = (id,f) => { const b=$(id); if(b) b.onclick=f; };
+  on("exStart", examSetup); on("exNew", examSetup);
+  on("exResume", ()=>{ EX.data=exLoad(); examAsk(); });
+  on("exSee", ()=>{ EX.data=exLoad(); examResults(); });
+}
+/* Elección del examen (se recuerda en la tablet) */
+const CH_KEY = META.key + "-exam-choice";
+let CH = {secs:CARDS.map(c=>c.id), n:20};
+try{ const c = JSON.parse(localStorage.getItem(CH_KEY)||"null");
+  if(c && Array.isArray(c.secs)){ const ok = c.secs.filter(g=>SECNO[g]); if(ok.length) CH.secs = ok; if([10,20,30].includes(c.n)) CH.n = c.n; } }catch(e){}
+const chSave = () => { try{ localStorage.setItem(CH_KEY, JSON.stringify(CH)); }catch(e){} };
+const qsOf = g => BANK.questions.filter(q=>q.g===g);
+function available(secs){
+  const qs = BANK.questions.filter(q=>secs.includes(q.g));
+  return qs.filter(q=>q.t!=="spot").length + Math.min(SPOT_MAX, qs.filter(q=>q.t==="spot").length);
+}
+function examSetup(){
+  window.scrollTo(0,0);
+  const d = exLoad(), pending = d && d.res.length < d.qs.length;
+  app.innerHTML = `
+    ${topBar("📝 Exam")}
+    <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>${esc(META.short)} exam</h1><p>Choose the sections. Questions in English, different every time.</p></div></div>
+    <div class="q setup">
+      <details class="help" style="box-shadow:none;background:var(--chip)">
+        <summary>👨‍👩‍👧 Para papá o mamá</summary>
+        <ol>
+          <li>Elige qué examinar: <b>una sección</b>, <b>varias</b> o <b>toda la unidad</b>, y cuántas preguntas. Las preguntas salen desordenadas, pero solo de esas secciones (repartidas por igual).</li>
+          <li>El peque contesta en la tablet. Casi todas se corrigen solas y dicen la respuesta buena.</li>
+          <li><b>Preguntas abiertas</b>: lee la pregunta en voz alta, el peque contesta hablando, pulsa <b>«Descubrir»</b> y marca <b>✅ Bien</b> o <b>❌ Mal</b> comparando con la respuesta modelo.</li>
+          <li><b>Huecos</b>: si escribe bien la palabra con una falta pequeña, pulsa «Dar por buena».</li>
+          <li>Al final: <b>nota sobre 10</b>, nota por sección y lista de lo que hay que repasar.</li>
+        </ol>
+      </details>
+      <p class="prompt">What do you want to be tested on?</p>
+      <button class="whole" id="whole"></button>
+      <div class="secpick" id="secpick">${CARDS.map(c=>`<label><input type="checkbox" value="${c.id}"><span><b>${SECNO[c.id]}. ${esc(c.title)}</b><small>p. ${esc(c.pages)} · ${qsOf(c.id).length} questions</small></span></label>`).join("")}</div>
+      <p class="prompt" style="margin-top:12px">How many questions?</p>
+      <div class="lenpick" id="lens"></div>
+      ${pending?`<p class="prompt" style="margin-top:10px">⚠️ Hay un examen a medias; si empiezas uno nuevo se sustituye.</p>`:""}
+      <button class="go" id="exGo">Start the exam! ➜</button>
+    </div>`;
+  bindBack();
+  const boxes = [...app.querySelectorAll("#secpick input")];
+  const paint = () => {
+    boxes.forEach(b=>{ b.checked = CH.secs.includes(b.value); b.closest("label").classList.toggle("on", b.checked); });
+    const all = CH.secs.length===CARDS.length;
+    $("whole").className = "whole" + (all?" on":"");
+    $("whole").innerHTML = `${all?"☑️":"⬜"} <b>The whole unit</b> <small>(all ${CARDS.length} sections)</small>`;
+    const av = available(CH.secs);
+    let opts = [10,20,30].filter(n=>n<=av).map(n=>[n,String(n)]);
+    if(av<30 && av>0) opts.push([av, `All (${av})`]);
+    const cur = Math.min(CH.n, av);
+    $("lens").innerHTML = opts.map(([n,l])=>`<button data-n="${n}" class="${n===cur?"on":""}">${l}</button>`).join("");
+    $("lens").querySelectorAll("button").forEach(b=>b.onclick=()=>{ CH.n=+b.dataset.n; chSave(); paint(); });
+    $("exGo").disabled = !CH.secs.length;
+    $("exGo").textContent = CH.secs.length ? `Start the exam! (${cur} questions) ➜` : "Choose at least one section";
+  };
+  boxes.forEach(b=>b.onchange=()=>{ CH.secs = boxes.filter(x=>x.checked).map(x=>x.value); chSave(); paint(); });
+  $("whole").onclick=()=>{ CH.secs = CH.secs.length===CARDS.length ? [] : CARDS.map(c=>c.id); chSave(); paint(); };
+  paint();
+  $("exGo").onclick = ()=>{ if(!CH.secs.length) return; chSave(); examStart(buildExam(CH.secs, Math.min(CH.n, available(CH.secs))), CH.secs); };
+}
+/* Preguntas al azar solo de las secciones elegidas, repartidas por igual entre ellas y variando el tipo */
+function buildExam(secs, n){
+  let spots = 0;
+  const lists = {};
+  secs.forEach(g=>{
+    const fams = {};
+    shuffle(qsOf(g)).forEach(q=>(fams[famOf(q)] ||= []).push(q));
+    const order = shuffle(Object.keys(fams)), out = [];
+    while(order.some(f=>fams[f].length)) order.forEach(f=>{ if(fams[f].length) out.push(fams[f].shift()); });
+    lists[g] = out;
+  });
+  const take = g => { const L = lists[g]; while(L.length){ const q = L.shift(); if(q.t==="spot"){ if(spots>=SPOT_MAX) continue; spots++; } return q; } return null; };
+  const quota = Object.fromEntries(secs.map(g=>[g, Math.floor(n/secs.length)]));
+  shuffle(secs).slice(0, n % secs.length).forEach(g=>quota[g]++);
+  const chosen = [];
+  let missing = 0;
+  secs.forEach(g=>{ for(let k=0;k<quota[g];k++){ const q = take(g); if(q) chosen.push(q); else { missing += quota[g]-k; break; } } });
+  while(missing>0){
+    let moved = false;
+    for(const g of shuffle(secs)){ if(missing<=0) break; const q = take(g); if(q){ chosen.push(q); missing--; moved = true; } }
+    if(!moved) break;
+  }
+  return shuffle(chosen).map(q=>q.id);
+}
+/* Prepara una pregunta: baraja opciones, elige imagen, elige parejas */
+function instance(id){
+  const q = BYID[id], o = {id};
+  if(q.img) o.img = Array.isArray(q.img) ? pick(q.img) : q.img;
+  if(q.t==="mc") o.opts = shuffle([q.a, ...q.o]);
+  if(q.t==="order"){ let s; do{ s = shuffle(q.a); } while(s.join("|")===q.a.join("|")); o.items = s; }
+  if(q.t==="build"){ const n = words(q.a).length; let s; do{ s = shuffle([...Array(n).keys()]); } while(n>1 && s.every((v,i)=>v===i)); o.items = s; }
+  if(q.t==="match"){
+    const pool = q.pool;
+    const seenR = new Set(), pairs = [];
+    for(const p of shuffle(pool)){ if(pairs.length>=q.n) break; if(seenR.has(p[1])) continue; seenR.add(p[1]); pairs.push(p); }
+    o.pairs = pairs; o.right = shuffle(pairs.map(p=>p[1]));
+  }
+  return o;
+}
+function examStart(ids, secs){
+  EX.data = {start:Date.now(), secs:secs||[...new Set(ids.map(id=>BYID[id].g))], qs:ids.map(instance), res:[]};
+  exSave(); examAsk();
+}
+function examAsk(){
+  window.scrollTo(0,0);
+  const d = EX.data, k = d.res.length;
+  if(k >= d.qs.length) return d.practice ? practiceEnd() : examResults();
+  const inst = d.qs[k], q = BYID[inst.id], pct = k/d.qs.length*100;
+  const okN = d.res.filter(r=>r.pts>=1).length;
+  const img = inst.img && q.t!=="spot" ? `<img class="qimg" data-zoom src="${IMG(inst.img)}" alt="">` : "";
+  app.innerHTML = `
+    ${topBar(d.practice?"✏️ Practice":"📝 Exam")}
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>${d.practice?"Exercise":"Question"} ${k+1} of ${d.qs.length}</span><span>${d.practice?`✅ ${okN}`:`⭐ ${fmtG(Math.round(pts(d)*10)/10)}`}</span></div>
+    <div class="q" id="qbox">
+      <span class="kind">${KIND[famOf(q)==="pic" && q.t==="mc" ? "pic" : q.t]} · Section ${SECNO[q.g]}</span>
+      ${img}
+      <div id="body"></div>
+      <div id="fb"></div>
+      <div id="nextWrap"></div>
+    </div>`;
+  bindBack();
+  ({mc:askMc, tf:askTf, gap:askGap, match:askMatch, order:askOrder, spot:askSpot, open:askOpen, build:askBuild})[q.t](q, inst);
+}
+/* Guarda el resultado de la pregunta actual y enseña «Next» */
+function answer(p, given, fbHTML){
+  const d = EX.data;
+  d.res.push({pts:Math.round(p*100)/100, given});
+  if(d.res.length===d.qs.length) d.end = Date.now();
+  exSave();
+  p>=1 ? sfxOk() : sfxKo();
+  const q = BYID[d.qs[d.res.length-1].id], say = sentenceOf(q);
+  $("fb").innerHTML = fbHTML + (q.why?`<div class="fb why">💡 ${esc(q.why)}</div>`:"") + (say?`<button class="listen" id="listen">🔊 Listen</button>`:"");
+  if(say) $("listen").onclick = ()=>speak(say);
+  const b = document.createElement("button"); b.className="go"; b.id="nextQ";
+  b.textContent = d.res.length>=d.qs.length ? (d.practice ? "Finish 🏁" : "See my mark 🏁") : "Next ➜";
+  b.onclick = examAsk; $("nextWrap").appendChild(b);
+  b.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+const okFb = () => { confetti(); return `<div class="fb ok">${PRAISE[rnd(PRAISE.length)]}</div>`; };
+const badFb = (right, extra="") => `<div class="fb bad"><div class="head">Not quite…</div><div class="right">✔ ${esc(right)}</div>${extra}</div>`;
+
+function askMc(q, inst){
+  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><div class="opts">${inst.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}</div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const val = inst.opts[+b.dataset.i], good = val===q.a;
+    app.querySelectorAll(".opt").forEach(x=>{ x.disabled=true; const v=inst.opts[+x.dataset.i]; if(v===q.a) x.classList.add("ok"); else if(x===b) x.classList.add("bad"); else x.classList.add("dim"); });
+    answer(good?1:0, val, good?okFb():badFb(q.a));
+  });
+}
+function askTf(q){
+  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><div class="opts two tf"><button class="opt" data-v="1">True</button><button class="opt" data-v="0">False</button></div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const v = b.dataset.v==="1", good = v===q.a;
+    app.querySelectorAll(".opt").forEach(x=>{ x.disabled=true; if((x.dataset.v==="1")===q.a) x.classList.add("ok"); else x.classList.add(x===b?"bad":"dim"); });
+    answer(good?1:0, v?"True":"False", good ? (q.fix?`<div class="fb ok">${PRAISE[rnd(PRAISE.length)]}<div class="right" style="font-size:1rem;color:var(--ink)">${esc(q.fix)}</div></div>`:okFb())
+      : badFb(`It is ${q.a?"TRUE":"FALSE"}.`, q.fix?`<div>${esc(q.fix)}</div>`:""));
+  });
+}
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[.,!?;:"'()]/g," ").replace(/^\s*(the|a|an)\s+/,"").replace(/\s+/g," ").trim();
+function askGap(q){
+  const parts = esc(q.q).split("___");
+  $("body").innerHTML = `<p class="ask">${parts[0]}<span class="blank">?</span>${parts[1]||""}</p>
+    <input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="✏️ write here…" aria-label="Your answer">
+    <button class="go" id="check">Check ✔</button>`;
+  const inp = $("ans"); setTimeout(()=>inp.focus(),50);
+  const go = () => {
+    const v = inp.value.trim(); if(!v) return;
+    const good = q.a.some(a=>norm(a)===norm(v));
+    inp.disabled = true; inp.classList.add(good?"ok":"bad"); $("check").remove();
+    answer(good?1:0, v, good?okFb():badFb(q.a[0], `<button class="go small alt" id="override">👨‍👩‍👧 Dar por buena (falta pequeña)</button>`));
+    const ov = $("override");
+    if(ov) ov.onclick = ()=>{ const r=EX.data.res[EX.data.res.length-1]; r.pts=1; r.override=true; exSave(); inp.classList.replace("bad","ok"); $("fb").innerHTML=`<div class="fb ok">✅ OK! (${esc(q.a[0])})</div>`; sfxOk(); };
+  };
+  $("check").onclick = go;
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter") go(); });
+}
+function askMatch(q, inst){
+  const L = inst.pairs.map(p=>p[0]), R = inst.right, link = {}; let sel = null;
+  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><p class="prompt">Tap a word on the left, then its partner on the right.</p>
+    <div class="match"><div class="col">${L.map((t,i)=>`<button class="mt" data-l="${i}">${esc(t)}</button>`).join("")}</div>
+    <div class="col">${R.map((t,i)=>`<button class="mt" data-r="${i}">${esc(t)}</button>`).join("")}</div></div>
+    <button class="go" id="check" disabled>Check ✔</button>`;
+  const paint = () => {
+    app.querySelectorAll(".mt").forEach(b=>{ b.className="mt"; b.removeAttribute("data-p"); });
+    Object.entries(link).forEach(([l,r],k)=>{
+      const n = +l+1, lb = app.querySelector(`[data-l="${l}"]`), rb = app.querySelector(`[data-r="${r}"]`);
+      [lb,rb].forEach(b=>{ b.classList.add("p"+n); b.dataset.p = n; });
+    });
+    if(sel!==null) app.querySelector(`[data-l="${sel}"]`).classList.add("sel");
+    $("check").disabled = Object.keys(link).length < L.length;
+  };
+  app.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ const l=b.dataset.l; if(link[l]!==undefined){ delete link[l]; } sel = l; paint(); });
+  app.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{
+    const r = b.dataset.r;
+    const owner = Object.keys(link).find(l=>link[l]===r);
+    if(sel===null){ if(owner!==undefined){ delete link[owner]; paint(); } return; }
+    if(owner!==undefined) delete link[owner];
+    link[sel] = r; sel = null; paint();
+  });
+  $("check").onclick = ()=>{
+    let good = 0;
+    L.forEach((t,i)=>{ const ok = R[+link[i]]===inst.pairs[i][1]; if(ok) good++;
+      app.querySelector(`[data-l="${i}"]`).classList.add(ok?"okm":"badm"); app.querySelector(`[data-r="${link[i]}"]`).classList.add(ok?"okm":"badm"); });
+    app.querySelectorAll(".mt").forEach(b=>b.disabled=true); $("check").remove();
+    const p = good/L.length;
+    answer(p, `${good}/${L.length}`, p===1 ? okFb() :
+      `<div class="fb ${good?"part":"bad"}"><div class="head">${good} of ${L.length} correct</div><div class="mres">${inst.pairs.map(([a,b])=>`<div><b>${esc(a)}</b> → ${esc(b)}</div>`).join("")}</div></div>`);
+  };
+}
+function askOrder(q, inst){
+  const seq = [];
+  const draw = () => {
+    $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><p class="prompt">Tap the items in the right order.</p>
+      <div class="seq">${seq.map((t,i)=>`<div class="it"><b>${i+1}.</b>${esc(t)}</div>`).join("") || `<span class="prompt">1, 2, 3…</span>`}</div>
+      <div class="pool">${inst.items.filter(t=>!seq.includes(t)).map(t=>`<button data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>
+      <div class="row2"><button class="go alt small" id="undo" ${seq.length?"":"disabled"}>↩ Undo</button><button class="go small" id="check" ${seq.length===inst.items.length?"":"disabled"}>Check ✔</button></div>`;
+    app.querySelectorAll(".pool button").forEach(b=>b.onclick=()=>{ seq.push(b.dataset.t); draw(); });
+    $("undo").onclick=()=>{ seq.pop(); draw(); };
+    $("check").onclick=()=>{
+      let good = 0;
+      app.querySelectorAll(".seq .it").forEach((el,i)=>{ const ok = seq[i]===q.a[i]; if(ok) good++; el.classList.add(ok?"okm":"badm"); });
+      $("undo").disabled = true; $("check").disabled = true;
+      const p = good/q.a.length;
+      answer(p, seq.join(" → "), p===1 ? okFb() : `<div class="fb ${good?"part":"bad"}"><div class="head">${good} of ${q.a.length} in the right place</div><div class="right">✔ ${q.a.map((t,i)=>`${i+1}. ${esc(t)}`).join("<br>")}</div></div>`);
+    };
+  };
+  draw();
+}
+function askSpot(q){
+  const m = BANK.maps[q.map];
+  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p>
+    <div class="map"><img src="${IMG(m.img)}" alt="Picture with numbered parts" width="${m.w}" height="${m.h}" data-zoom>
+      ${m.pins===false?"":`<svg viewBox="0 0 ${m.w} ${m.h}" aria-hidden="true">${m.spots.map(s=>`<line x1="${s.x*m.w/100}" y1="${s.y*m.h/100}" x2="${s.bx*m.w/100}" y2="${s.by*m.h/100}" stroke="#7B5CFF" stroke-width="4"/><circle cx="${s.x*m.w/100}" cy="${s.y*m.h/100}" r="7" fill="#7B5CFF"/>`).join("")}</svg>
+      ${m.spots.map(s=>`<button class="pin" data-n="${s.n}" style="left:${s.bx}%;top:${s.by}%" aria-label="Area ${s.n}">${s.n}</button>`).join("")}`}
+    </div>
+    ${m.pins===false?`<p class="prompt">🔍 Tap the picture to make it bigger.</p>`:""}
+    <div class="nums">${m.spots.map(s=>`<button data-n="${s.n}">${s.n}</button>`).join("")}</div>`;
+  const choose = n => {
+    const good = n===q.a, right = m.spots.find(s=>s.n===q.a), chosen = m.spots.find(s=>s.n===n);
+    app.querySelectorAll(".pin").forEach(p=>{ p.disabled=true; if(+p.dataset.n===q.a) p.classList.add("okm"); else if(+p.dataset.n===n) p.classList.add("badm"); });
+    app.querySelectorAll(".nums button").forEach(b=>b.disabled=true);
+    answer(good?1:0, String(n), good ? okFb() : badFb(`Number ${q.a}: ${right.label}`, `<div>You chose ${n}: ${esc(chosen.label)}</div>`));
+    if(m.pins===false){ const b=document.createElement("div"); b.className="hint"; b.textContent = `${q.a} = ${right.label}`; $("fb").prepend(b); }
+  };
+  app.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
+}
+/* Ordenar palabras para formar una frase */
+const words = s => s.replace(/[.!?]+$/,"").split(/\s+/).filter(Boolean);
+const normS = s => s.toLowerCase().replace(/[.,!?]/g,"").replace(/\s+/g," ").trim();
+function askBuild(q, inst){
+  const W = words(q.a), seq = [];
+  const draw = () => {
+    $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><p class="prompt">Tap the words in the right order.</p>
+      <div class="seq words" id="seq">${seq.map(i=>`<span class="it">${esc(W[i])}</span>`).join(" ") || `<span class="prompt">…</span>`}</div>
+      <div class="pool">${inst.items.filter(i=>!seq.includes(i)).map(i=>`<button data-i="${i}">${esc(W[i])}</button>`).join("")}</div>
+      <div class="row2"><button class="go alt small" id="undo" ${seq.length?"":"disabled"}>↩ Undo</button><button class="go small" id="check" ${seq.length===W.length?"":"disabled"}>Check ✔</button></div>`;
+    app.querySelectorAll(".pool button").forEach(b=>b.onclick=()=>{ seq.push(+b.dataset.i); draw(); });
+    $("undo").onclick=()=>{ seq.pop(); draw(); };
+    $("check").onclick=()=>{
+      const said = seq.map(i=>W[i]).join(" "), good = normS(said)===normS(q.a);
+      $("seq").classList.add(good?"okm":"badm"); $("undo").disabled = true; $("check").disabled = true;
+      app.querySelectorAll(".pool button").forEach(b=>b.disabled=true);
+      answer(good?1:0, said, good ? okFb() : badFb(q.a));
+    };
+  };
+  draw();
+}
+/* Frase completa en inglés para escucharla (🔊) */
+function sentenceOf(q){
+  const fill = (t, a) => t.replace(/\s*\([^)]*\)/g,"").replace(/^.*?→\s*/,"").replace(/^[^"]*"(.*)"\s*$/,"$1").replace("___", a).replace(/…/g,"").trim();
+  if(q.t==="build") return q.a;
+  if(q.t==="gap") return fill(q.q, q.a[0]);
+  if(q.t==="mc" && q.q.includes("___")) return fill(q.q, q.a);
+  if(q.t==="tf") return q.a ? q.q.replace(/"/g,"") : (q.fix||"");
+  return "";
+}
+/* ---------- PRÁCTICA (sin nota) ---------- */
+function practiceSetup(){
+  window.scrollTo(0,0);
+  const n = g => BANK.questions.filter(q=>q.g===g && q.t!=="open").length;
+  app.innerHTML = `
+    ${topBar("✏️ Practice")}
+    <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>Practice</h1><p>Exercises to study. You see the right answer at once. No mark!</p></div></div>
+    <div class="q setup">
+      <p class="prompt">Choose a section</p>
+      <div class="secpick">${CARDS.map(c=>`<button class="go alt small" style="text-align:left;margin-top:0" data-g="${c.id}"><b>${SECNO[c.id]}. ${esc(c.title)}</b> <small>· p. ${esc(c.pages)} · ${n(c.id)} exercises</small></button>`).join("")}</div>
+      <button class="go" id="prAll">All the unit (${BANK.questions.filter(q=>q.t!=="open").length} exercises) ➜</button>
+    </div>`;
+  bindBack();
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>practiceStart([b.dataset.g]));
+  $("prAll").onclick=()=>practiceStart(CARDS.map(c=>c.id));
+}
+let PR_LAST = null;
+function practiceStart(secs, ids){
+  PR_LAST = secs;
+  const pool = ids || CARDS.filter(c=>secs.includes(c.id)).flatMap(c=>shuffle(BANK.questions.filter(q=>q.g===c.id && q.t!=="open")).map(q=>q.id));
+  EX.data = {practice:true, secs, qs:pool.map(instance), res:[]};
+  examAsk();
+}
+function practiceEnd(){
+  window.scrollTo(0,0);
+  const d = EX.data, rows = d.qs.map((inst,i)=>({inst, r:d.res[i], q:BYID[inst.id]})), wrong = rows.filter(x=>x.r && x.r.pts<1);
+  if(!wrong.length) confetti();
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>${wrong.length?"Practice done! 💪":"All correct! 🏆"}</h1><p>${d.qs.length} exercises · ${wrong.length?`${wrong.length} to review`:"nothing to review"}</p></div></div>
+    <div class="q end">
+      ${wrong.length?`<div class="mist"><h3>📌 To review (${wrong.length})</h3>
+        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q)}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.q.why?`<br>💡 ${esc(x.q.why)}`:""}</div></div>`).join("")}
+      </div>
+      <button class="go" id="prWrong">🔁 Practise the ones I got wrong (${wrong.length})</button>`:""}
+      <button class="go alt" id="prAgain">Practise again 🔁</button>
+      <button class="go alt" id="prOther">Other section</button>
+      <button class="go alt" id="menu">Menu</button>
+    </div>`;
+  const w=$("prWrong"); if(w) w.onclick=()=>practiceStart(d.secs, shuffle(wrong.map(x=>x.inst.id)));
+  $("prAgain").onclick=()=>practiceStart(d.secs);
+  $("prOther").onclick=practiceSetup;
+  $("menu").onclick=home;
+}
+function askOpen(q){
+  $("body").innerHTML = `<p class="parent">👨‍👩‍👧 Lee la pregunta en voz alta. El peque contesta hablando.</p>
+    <p class="ask">${esc(q.q)}</p>
+    <div id="hid"><button class="go" id="show">👁️ Descubrir</button></div>
+    <div id="shown" hidden>
+      <div class="answer">${esc(q.a)}</div>
+      <p class="prompt" style="margin-top:12px">¿Lo ha dicho bien?</p>
+      <div class="mark"><button class="yes" id="yes">✅ Bien</button><button class="no" id="no">❌ Mal</button></div>
+    </div>`;
+  $("show").onclick=()=>{ sfxReveal(); $("hid").hidden=true; $("shown").hidden=false; };
+  const mark = good => { const d=EX.data; d.res.push({pts:good?1:0, given:good?"✅":"❌"}); if(d.res.length===d.qs.length) d.end=Date.now(); exSave(); good?sfxOk():sfxKo(); examAsk(); };
+  $("yes").onclick=()=>mark(true); $("no").onclick=()=>mark(false);
+}
+function rightText(q, inst){
+  if(q.t==="mc") return q.a;
+  if(q.t==="tf") return (q.a?"True":"False") + (q.fix?` — ${q.fix}`:"");
+  if(q.t==="gap") return q.q.replace("___", q.a[0]);
+  if(q.t==="match") return inst.pairs.map(p=>`${p[0]} → ${p[1]}`).join(" · ");
+  if(q.t==="order") return q.a.join(" → ");
+  if(q.t==="build") return q.a;
+  if(q.t==="spot") return BANK.maps[q.map].spots.find(s=>s.n===q.a).label;
+  return q.a;
+}
+function examResults(){
+  window.scrollTo(0,0);
+  const d = EX.data, g = grade(d), n = d.qs.length;
+  const full = d.res.filter(r=>r.pts>=1).length, zero = d.res.filter(r=>r.pts<=0).length, half = n-full-zero;
+  const rows = d.qs.map((inst,i)=>({inst, r:d.res[i], q:BYID[inst.id]}));
+  const wrong = rows.filter(x=>x.r && x.r.pts<1).sort((a,b)=>SECNO[a.q.g]-SECNO[b.q.g]);
+  const secs = [...new Set(rows.map(x=>x.q.g))].sort((a,b)=>SECNO[a]-SECNO[b]);
+  const bySec = secs.map(g=>{ const rs = rows.filter(x=>x.q.g===g); const p = rs.reduce((s,x)=>s+(x.r?x.r.pts:0),0); return {g, n:rs.length, p, nota:Math.round(p/rs.length*100)/10}; });
+  const scope = (d.secs||secs).length===CARDS.length ? "Whole unit" : (d.secs||secs).length===1 ? `Section ${secLabel((d.secs||secs)[0])}` : `Sections ${(d.secs||secs).map(g=>SECNO[g]).sort((a,b)=>a-b).join(", ")}`;
+  const stars = g>=9?3: g>=7?2: g>=5?1:0;
+  if(g>=9) confetti();
+  const msg = g>=9?"Outstanding! 🏆": g>=7?"Very good! 🌟": g>=5?"You passed! 👍":"Keep studying! 💪";
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>${msg}</h1><p>${esc(scope)} · ${n} questions</p></div></div>
+    <div class="q end">
+      <div class="stars">${[0,1,2].map(k=>`<span class="${k<stars?"":"off"}">⭐</span>`).join("")}</div>
+      <p class="prompt">Nota</p>
+      <div class="big">${fmtG(g)} <small>/ 10</small></div>
+      <div class="score2"><div class="y">✅ ${full}</div>${half?`<div class="h">½ ${half}</div>`:""}<div class="n">❌ ${zero}</div></div>
+      ${bySec.length>1?`<div class="mist"><h3>📊 By section</h3>${bySec.map(b=>`<div class="bysec"><span>${esc(secLabel(b.g))}</span><b class="${b.nota>=5?"pass":"fail"}">${fmtG(b.nota)}</b><small>${fmtG(Math.round(b.p*10)/10)}/${b.n}</small></div>`).join("")}</div>`:""}
+      ${wrong.length?`<div class="mist"><h3>📌 To study (${wrong.length})</h3>
+        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q)}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.r.given && x.q.t!=="open"?`<br>Your answer: ${esc(x.r.given)}`:""}</div></div>`).join("")}
+      </div>
+      <button class="go" id="exRep">🔁 Repeat only the mistakes (${wrong.length})</button>`:""}
+      <button class="go alt" id="exNew">New exam 📝</button>
+      <button class="go alt" id="menu">Menu</button>
+    </div>`;
+  const r=$("exRep"); if(r) r.onclick=()=>examStart(shuffle(wrong.map(x=>x.inst.id)), d.secs);
+  $("exNew").onclick=examSetup;
+  $("menu").onclick=home;
+}
+
+document.title = META.title;
+home();
+</script>
+</body>
+</html>
