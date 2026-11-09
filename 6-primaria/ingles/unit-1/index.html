@@ -87,6 +87,12 @@ details.help li{margin-bottom:4px}
 
 .q{background:var(--card);border-radius:30px;padding:20px 18px;box-shadow:0 8px 0 var(--line)}
 .prompt{color:var(--soft);margin:0 0 4px;font-size:1.05rem;font-weight:500;text-align:center}
+.ins{text-align:center;font-weight:700;font-size:1.15rem;color:var(--grape);margin:0 0 4px}
+.ex{text-align:center;color:var(--soft);font-size:.95rem;margin:0 0 8px}
+.ex b{color:var(--ink)}
+details.es{margin:0 auto 10px;width:max-content;max-width:100%;background:var(--chip);border-radius:14px;padding:4px 12px;font-size:.95rem}
+details.es summary{cursor:pointer;font-weight:700;color:var(--soft)}
+details.es div{margin-top:4px}
 .kind{display:block;width:max-content;margin:0 auto 8px;background:var(--chip);border-radius:12px;padding:2px 12px;font-size:.85rem;font-weight:700;color:var(--soft)}
 .ask{font-size:1.45rem;font-weight:600;text-align:center;margin:4px 0 14px;line-height:1.3}
 .ask .blank{display:inline-block;min-width:3.5em;border-bottom:4px solid var(--grape);color:var(--grape)}
@@ -630,6 +636,7 @@ function examAsk(){
     <div class="stats"><span>${d.practice?"Exercise":"Question"} ${k+1} of ${d.qs.length}</span><span>${d.practice?`✅ ${okN}`:`⭐ ${fmtG(Math.round(pts(d)*10)/10)}`}</span></div>
     <div class="q" id="qbox">
       <span class="kind">${KIND[famOf(q)==="pic" && q.t==="mc" ? "pic" : q.t]} · Section ${SECNO[q.g]}</span>
+      ${insHTML(q, inst)}
       ${img}
       <div id="body"></div>
       <div id="fb"></div>
@@ -673,7 +680,7 @@ function askTf(q){
       : badFb(`It is ${q.a?"TRUE":"FALSE"}.`, q.fix?`<div>${esc(q.fix)}</div>`:""));
   });
 }
-const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[.,!?;:"'()]/g," ").replace(/^\s*(the|a|an)\s+/,"").replace(/\s+/g," ").trim();
+const norm = s => String(s).toLowerCase().replace(/['’]/g,"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[.,!?;:"'()]/g," ").replace(/^\s*(the|a|an)\s+/,"").replace(/\s+/g," ").trim();
 function askGap(q){
   const parts = esc(q.q).split("___");
   $("body").innerHTML = `<p class="ask">${parts[0]}<span class="blank">?</span>${parts[1]||""}</p>
@@ -693,7 +700,7 @@ function askGap(q){
 }
 function askMatch(q, inst){
   const L = inst.pairs.map(p=>p[0]), R = inst.right, link = {}; let sel = null;
-  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><p class="prompt">Tap a word on the left, then its partner on the right.</p>
+  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p>
     <div class="match"><div class="col">${L.map((t,i)=>`<button class="mt" data-l="${i}">${esc(t)}</button>`).join("")}</div>
     <div class="col">${R.map((t,i)=>`<button class="mt" data-r="${i}">${esc(t)}</button>`).join("")}</div></div>
     <button class="go" id="check" disabled>Check ✔</button>`;
@@ -727,7 +734,7 @@ function askMatch(q, inst){
 function askOrder(q, inst){
   const seq = [];
   const draw = () => {
-    $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><p class="prompt">Tap the items in the right order.</p>
+    $("body").innerHTML = `<p class="ask">${esc(q.q)}</p>
       <div class="seq">${seq.map((t,i)=>`<div class="it"><b>${i+1}.</b>${esc(t)}</div>`).join("") || `<span class="prompt">1, 2, 3…</span>`}</div>
       <div class="pool">${inst.items.filter(t=>!seq.includes(t)).map(t=>`<button data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>
       <div class="row2"><button class="go alt small" id="undo" ${seq.length?"":"disabled"}>↩ Undo</button><button class="go small" id="check" ${seq.length===inst.items.length?"":"disabled"}>Check ✔</button></div>`;
@@ -761,20 +768,39 @@ function askSpot(q){
   };
   app.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>choose(+b.dataset.n));
 }
+/* Instrucción fija por tipo (con ejemplo en los tipos nuevos) y pista en español 🇪🇸 */
+function insHTML(q, inst){
+  const short = o => o.every(x=>x.split(/\s+/).length<=2);
+  const verb = q.t==="gap" && /___[^(]*\([^)]+\)/.test(q.q);
+  const I = ({
+    mc: () => [q.img && !q.q.includes("___") ? "Look and choose." : (inst.opts && short(inst.opts) ? "Choose the correct word." : "Choose the correct answer."), ""],
+    tf: () => ["True or false?", ""],
+    gap: () => verb ? ["Write the verb in the correct form.", "Example: Yesterday I ___ (play) football. → <b>played</b>"]
+              : [q.a.some(a=>/\s/.test(a)) ? "Write the words." : "Write the word.", ""],
+    build: () => ["Put the words in order.", "Example: name / is / My / Tom → <b>My name is Tom.</b>"],
+    match: () => ["Match.", "Tap a word on the left, then its partner on the right."],
+    order: () => ["Put in order.", "Tap them in the right order."],
+    spot: () => ["Look at the picture. Tap the number.", ""],
+    open: () => ["Answer out loud. Your mum or dad checks.", ""]
+  }[q.t] || (() => ["",""]))();
+  const ins = q.ins || I[0], ex = q.ex || I[1];
+  if(q.t==="open") return `<p class="ins">${esc(ins)}</p>`;
+  return `<p class="ins">${esc(ins)}</p>${ex?`<p class="ex">${ex}</p>`:""}${q.es?`<details class="es"><summary>🇪🇸 Pista</summary><div>${esc(q.es)}</div></details>`:""}`;
+}
 /* Ordenar palabras para formar una frase */
 const words = s => s.replace(/[.!?]+$/,"").split(/\s+/).filter(Boolean);
 const normS = s => s.toLowerCase().replace(/[.,!?]/g,"").replace(/\s+/g," ").trim();
 function askBuild(q, inst){
   const W = words(q.a), seq = [];
   const draw = () => {
-    $("body").innerHTML = `<p class="ask">${esc(q.q)}</p><p class="prompt">Tap the words in the right order.</p>
+    $("body").innerHTML = `${q.q?`<p class="ask">${esc(q.q)}</p>`:""}
       <div class="seq words" id="seq">${seq.map(i=>`<span class="it">${esc(W[i])}</span>`).join(" ") || `<span class="prompt">…</span>`}</div>
       <div class="pool">${inst.items.filter(i=>!seq.includes(i)).map(i=>`<button data-i="${i}">${esc(W[i])}</button>`).join("")}</div>
       <div class="row2"><button class="go alt small" id="undo" ${seq.length?"":"disabled"}>↩ Undo</button><button class="go small" id="check" ${seq.length===W.length?"":"disabled"}>Check ✔</button></div>`;
     app.querySelectorAll(".pool button").forEach(b=>b.onclick=()=>{ seq.push(+b.dataset.i); draw(); });
     $("undo").onclick=()=>{ seq.pop(); draw(); };
     $("check").onclick=()=>{
-      const said = seq.map(i=>W[i]).join(" "), good = normS(said)===normS(q.a);
+      const said = seq.map(i=>W[i]).join(" "), good = [q.a, ...(q.alt||[])].some(x=>normS(said)===normS(x));
       $("seq").classList.add(good?"okm":"badm"); $("undo").disabled = true; $("check").disabled = true;
       app.querySelectorAll(".pool button").forEach(b=>b.disabled=true);
       answer(good?1:0, said, good ? okFb() : badFb(q.a));
@@ -822,7 +848,7 @@ function practiceEnd(){
     <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>${wrong.length?"Practice done! 💪":"All correct! 🏆"}</h1><p>${d.qs.length} exercises · ${wrong.length?`${wrong.length} to review`:"nothing to review"}</p></div></div>
     <div class="q end">
       ${wrong.length?`<div class="mist"><h3>📌 To review (${wrong.length})</h3>
-        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q)}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.q.why?`<br>💡 ${esc(x.q.why)}`:""}</div></div>`).join("")}
+        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q || x.q.es || "")}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.q.why?`<br>💡 ${esc(x.q.why)}`:""}</div></div>`).join("")}
       </div>
       <button class="go" id="prWrong">🔁 Practise the ones I got wrong (${wrong.length})</button>`:""}
       <button class="go alt" id="prAgain">Practise again 🔁</button>
@@ -835,11 +861,12 @@ function practiceEnd(){
   $("menu").onclick=home;
 }
 function askOpen(q){
-  $("body").innerHTML = `<p class="parent">👨‍👩‍👧 Lee la pregunta en voz alta. El peque contesta hablando.</p>
-    <p class="ask">${esc(q.q)}</p>
+  $("body").innerHTML = `<p class="ask">${esc(q.q)}</p>
+    ${q.ex?`<p class="ex">${q.ex}</p>`:""}${q.es?`<details class="es"><summary>🇪🇸 Pista</summary><div>${esc(q.es)}</div></details>`:""}
+    <p class="parent">👨‍👩‍👧 El peque contesta hablando; tú pulsas «Descubrir» y marcas.</p>
     <div id="hid"><button class="go" id="show">👁️ Descubrir</button></div>
     <div id="shown" hidden>
-      <div class="answer">${esc(q.a)}</div>
+      <div class="answer"><b>👨‍👩‍👧 Para corregir:</b> ${esc(q.a)}</div>
       <p class="prompt" style="margin-top:12px">¿Lo ha dicho bien?</p>
       <div class="mark"><button class="yes" id="yes">✅ Bien</button><button class="no" id="no">❌ Mal</button></div>
     </div>`;
@@ -878,7 +905,7 @@ function examResults(){
       <div class="score2"><div class="y">✅ ${full}</div>${half?`<div class="h">½ ${half}</div>`:""}<div class="n">❌ ${zero}</div></div>
       ${bySec.length>1?`<div class="mist"><h3>📊 By section</h3>${bySec.map(b=>`<div class="bysec"><span>${esc(secLabel(b.g))}</span><b class="${b.nota>=5?"pass":"fail"}">${fmtG(b.nota)}</b><small>${fmtG(Math.round(b.p*10)/10)}/${b.n}</small></div>`).join("")}</div>`:""}
       ${wrong.length?`<div class="mist"><h3>📌 To study (${wrong.length})</h3>
-        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q)}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.r.given && x.q.t!=="open"?`<br>Your answer: ${esc(x.r.given)}`:""}</div></div>`).join("")}
+        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q || x.q.es || "")}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.r.given && x.q.t!=="open"?`<br>Your answer: ${esc(x.r.given)}`:""}</div></div>`).join("")}
       </div>
       <button class="go" id="exRep">🔁 Repeat only the mistakes (${wrong.length})</button>`:""}
       <button class="go alt" id="exNew">New exam 📝</button>
