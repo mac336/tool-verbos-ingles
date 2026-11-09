@@ -47,7 +47,7 @@ button{font:inherit;color:inherit}
 img{max-width:100%}
 
 .crumb{display:inline-block;margin:0 0 6px;padding:6px 14px;border-radius:16px;background:var(--card);box-shadow:0 3px 0 var(--line);color:var(--ink);text-decoration:none;font-weight:600}
-.hello{display:flex;align-items:flex-end;gap:10px;margin:6px 0 16px}
+.hello{display:flex;align-items:flex-end;gap:10px;margin:6px 0 16px;padding-right:46px}
 .owl{font-size:4rem;line-height:1;filter:drop-shadow(0 4px 0 rgba(0,0,0,.12));animation:bob 2.4s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
 .bubble{background:var(--card);border-radius:22px 22px 22px 6px;padding:12px 16px;box-shadow:0 4px 0 var(--line);font-weight:500}
@@ -164,6 +164,19 @@ input.bad{border-color:var(--bad)!important;background:var(--badbg);animation:sh
 .mark .yes{background:var(--mint)} .mark .no{background:var(--bad)}
 .lenpick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
 .lenpick button{border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:1.1rem;min-height:52px}
+.whole{display:block;width:100%;border:3px solid var(--line);background:var(--chip);border-radius:18px;padding:10px 14px;cursor:pointer;font-size:1.1rem;text-align:left;min-height:56px;margin-bottom:8px}
+.whole.on{border-color:var(--sun);background:color-mix(in srgb,var(--sun) 35%,var(--chip))}
+.whole small{color:var(--soft)}
+.secpick{display:flex;flex-direction:column;gap:6px}
+.secpick label{display:flex;align-items:center;gap:12px;border:3px solid var(--line);background:var(--chip);border-radius:16px;padding:8px 12px;cursor:pointer;min-height:56px}
+.secpick label.on{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 16%,var(--chip))}
+.secpick input{width:26px;height:26px;flex:none;accent-color:var(--mint)}
+.secpick b{display:block;font-size:1rem;line-height:1.2}
+.secpick small{color:var(--soft);font-size:.85rem}
+.sectag{display:inline-block;background:var(--card);border-radius:10px;padding:0 8px;font-size:.8rem;font-weight:700;color:var(--orange);margin-bottom:2px}
+.bysec{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:var(--chip);border-radius:14px;padding:6px 12px;margin-bottom:6px;font-size:.95rem}
+.bysec b{font-size:1.2rem} .bysec b.pass{color:var(--ok)} .bysec b.fail{color:var(--bad)}
+.bysec small{color:var(--soft)}
 .lenpick button.on{border-color:var(--sun);background:var(--sun);color:#2B2350}
 .setup ol{margin:4px 0 12px;padding-left:22px;font-weight:500;font-size:1rem}
 .setup li{margin-bottom:4px}
@@ -338,9 +351,9 @@ function home(){
     <details class="help">
       <summary>👨‍👩‍👧 Para papá o mamá (cómo se usa)</summary>
       <ul>
-        <li><b>Fichas</b>: 5 fichas con el resumen en inglés, las imágenes del tema (tócalas para ampliarlas), el vocabulario inglés → español y las fechas.</li>
+        <li><b>Fichas</b>: una por sección, en el mismo orden que los apuntes (${CARDS.length} secciones), con el resumen en inglés, las imágenes del tema (tócalas para ampliarlas), el vocabulario inglés → español y las fechas.</li>
         <li><b>Tarjetas</b>: repaso de vocabulario y fechas. Se ve la palabra, se intenta decir el significado y se pulsa «Turn». Si lo sabía, «I knew it»; si no, «Again» y vuelve a salir.</li>
-        <li><b>Examen</b>: preguntas en inglés distintas cada vez (tipo test, verdadero/falso, huecos, unir, ordenar, mapa e imágenes). La mayoría se corrigen solas. En las <b>preguntas abiertas</b> el peque contesta en voz alta, tú pulsas «Descubrir» y marcas ✅ o ❌. En los huecos, si escribe la respuesta con una falta pequeña, puedes darla por buena.</li>
+        <li><b>Examen</b>: eliges una sección, varias o toda la unidad; preguntas en inglés desordenadas y distintas cada vez (tipo test, verdadero/falso, huecos, unir, ordenar, mapa e imágenes). La mayoría se corrigen solas. En las <b>preguntas abiertas</b> el peque contesta en voz alta, tú pulsas «Descubrir» y marcas ✅ o ❌. En los huecos, si escribe la respuesta con una falta pequeña, puedes darla por buena.</li>
         <li>Al final sale la <b>nota sobre 10</b> y la lista de lo que hay que repasar, con un botón para repetir solo los fallos.</li>
         <li>El contenido sale de los apuntes del profesor («Unit Prehistory 2»).</li>
       </ul>
@@ -363,7 +376,7 @@ function study(i){
     ${topBar("📖 Study cards")}
     <div class="fnav">
       <button class="arrow" id="prev" aria-label="Previous" ${i===0?"disabled":""}>‹</button>
-      <div class="ftitle">${c.ico} ${esc(c.title)}<small>Card ${i+1} of ${CARDS.length}</small></div>
+      <div class="ftitle">${c.ico} ${esc(c.title)}<small>Section ${i+1} of ${CARDS.length} · p. ${esc(c.pages)}</small></div>
       <button class="arrow" id="next" aria-label="Next" ${i===CARDS.length-1?"disabled":""}>›</button>
     </div>
     <div class="sect"><h2>📝 Summary</h2><ul>${c.summary.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
@@ -390,7 +403,7 @@ function study(i){
 const FL = {deck:"all", dir:"en"};
 function flashSetup(){
   window.scrollTo(0,0);
-  const decks = [["all","All vocabulary"], ...CARDS.map(c=>[c.id, `${c.ico} ${c.title}`]), ["dates","🗓️ Dates"]];
+  const decks = [["all","All vocabulary"], ...CARDS.map((c,i)=>[c.id, `${i+1}. ${c.title}`]), ["dates","🗓️ Dates"]];
   app.innerHTML = `
     ${topBar("🃏 Flashcards")}
     <div class="q setup">
@@ -458,12 +471,10 @@ const EX_KEY = "hist1eso-prehistory-exam";
 const KIND = {mc:"Multiple choice", pic:"Picture question", tf:"True or false", gap:"Fill in the gap", match:"Match", order:"Put in order", spot:"Map", open:"Open question"};
 const BYID = Object.fromEntries(BANK.questions.map(q=>[q.id,q]));
 const famOf = q => q.t==="mc" ? (q.img?"pic":"mc") : (q.t==="spot"||q.t==="order") ? "pic" : q.t;
-/* Reparto por tipo según la longitud del examen */
-const QUOTAS = {
-  10:{mc:2, pic:2, tf:2, gap:2, match:1, open:1},
-  20:{mc:5, pic:4, tf:4, gap:3, match:2, open:2},
-  30:{mc:7, pic:6, tf:6, gap:5, match:3, open:3}
-};
+/* Secciones (orden del PDF) */
+const SECNO = Object.fromEntries(CARDS.map((c,i)=>[c.id,i+1]));
+const secLabel = g => `${SECNO[g]}. ${CARDS[SECNO[g]-1].title}`;
+const SPOT_MAX = 3;
 let EX = {data:null};
 function exLoad(){
   try{
@@ -495,44 +506,85 @@ function bindExamHome(){
   on("exResume", ()=>{ EX.data=exLoad(); examAsk(); });
   on("exSee", ()=>{ EX.data=exLoad(); examResults(); });
 }
-let EXLEN = 20;
+/* Elección del examen (se recuerda en la tablet) */
+const CH_KEY = "hist1eso-exam-choice";
+let CH = {secs:CARDS.map(c=>c.id), n:20};
+try{ const c = JSON.parse(localStorage.getItem(CH_KEY)||"null");
+  if(c && Array.isArray(c.secs)){ const ok = c.secs.filter(g=>SECNO[g]); if(ok.length) CH.secs = ok; if([10,20,30].includes(c.n)) CH.n = c.n; } }catch(e){}
+const chSave = () => { try{ localStorage.setItem(CH_KEY, JSON.stringify(CH)); }catch(e){} };
+const qsOf = g => BANK.questions.filter(q=>q.g===g);
+function available(secs){
+  const qs = BANK.questions.filter(q=>secs.includes(q.g));
+  return qs.filter(q=>q.t!=="spot").length + Math.min(SPOT_MAX, qs.filter(q=>q.t==="spot").length);
+}
 function examSetup(){
   window.scrollTo(0,0);
   const d = exLoad(), pending = d && d.res.length < d.qs.length;
   app.innerHTML = `
     ${topBar("📝 Exam")}
-    <div class="hello"><div class="owl" aria-hidden="true">🗿</div><div class="bubble"><h1>Prehistory exam</h1><p>Questions in English, different every time.</p></div></div>
+    <div class="hello"><div class="owl" aria-hidden="true">🗿</div><div class="bubble"><h1>Prehistory exam</h1><p>Choose the sections. Questions in English, different every time.</p></div></div>
     <div class="q setup">
-      <p class="prompt">👨‍👩‍👧 Para papá o mamá</p>
-      <ol>
-        <li>El peque contesta cada pregunta en la tablet. Casi todas se corrigen solas y dicen la respuesta buena.</li>
-        <li><b>Preguntas abiertas</b>: lee la pregunta en voz alta, el peque contesta hablando, pulsa <b>«Descubrir»</b> y marca <b>✅ Bien</b> o <b>❌ Mal</b> comparando con la respuesta modelo.</li>
-        <li><b>Huecos</b>: si escribe bien la palabra con una falta pequeña, pulsa «Dar por buena».</li>
-        <li>Al final: <b>nota sobre 10</b> y lista de lo que hay que repasar.</li>
-      </ol>
-      <p class="prompt">How many questions?</p>
-      <div class="lenpick">${[10,20,30].map(n=>`<button data-n="${n}" class="${n===EXLEN?"on":""}">${n}</button>`).join("")}</div>
+      <details class="help" style="box-shadow:none;background:var(--chip)">
+        <summary>👨‍👩‍👧 Para papá o mamá</summary>
+        <ol>
+          <li>Elige qué examinar: <b>una sección</b>, <b>varias</b> o <b>toda la unidad</b>, y cuántas preguntas. Las preguntas salen desordenadas, pero solo de esas secciones (repartidas por igual).</li>
+          <li>El peque contesta en la tablet. Casi todas se corrigen solas y dicen la respuesta buena.</li>
+          <li><b>Preguntas abiertas</b>: lee la pregunta en voz alta, el peque contesta hablando, pulsa <b>«Descubrir»</b> y marca <b>✅ Bien</b> o <b>❌ Mal</b> comparando con la respuesta modelo.</li>
+          <li><b>Huecos</b>: si escribe bien la palabra con una falta pequeña, pulsa «Dar por buena».</li>
+          <li>Al final: <b>nota sobre 10</b>, nota por sección y lista de lo que hay que repasar.</li>
+        </ol>
+      </details>
+      <p class="prompt">What do you want to be tested on?</p>
+      <button class="whole" id="whole"></button>
+      <div class="secpick" id="secpick">${CARDS.map(c=>`<label><input type="checkbox" value="${c.id}"><span><b>${SECNO[c.id]}. ${esc(c.title)}</b><small>p. ${esc(c.pages)} · ${qsOf(c.id).length} questions</small></span></label>`).join("")}</div>
+      <p class="prompt" style="margin-top:12px">How many questions?</p>
+      <div class="lenpick" id="lens"></div>
       ${pending?`<p class="prompt" style="margin-top:10px">⚠️ Hay un examen a medias; si empiezas uno nuevo se sustituye.</p>`:""}
       <button class="go" id="exGo">Start the exam! ➜</button>
     </div>`;
   bindBack();
-  app.querySelectorAll(".lenpick button").forEach(b=>b.onclick=()=>{ EXLEN=+b.dataset.n; app.querySelectorAll(".lenpick button").forEach(x=>x.classList.toggle("on",x===b)); });
-  $("exGo").onclick = ()=>examStart(buildExam(EXLEN));
+  const boxes = [...app.querySelectorAll("#secpick input")];
+  const paint = () => {
+    boxes.forEach(b=>{ b.checked = CH.secs.includes(b.value); b.closest("label").classList.toggle("on", b.checked); });
+    const all = CH.secs.length===CARDS.length;
+    $("whole").className = "whole" + (all?" on":"");
+    $("whole").innerHTML = `${all?"☑️":"⬜"} <b>The whole unit</b> <small>(all ${CARDS.length} sections)</small>`;
+    const av = available(CH.secs);
+    let opts = [10,20,30].filter(n=>n<=av).map(n=>[n,String(n)]);
+    if(av<30 && av>0) opts.push([av, `All (${av})`]);
+    const cur = Math.min(CH.n, av);
+    $("lens").innerHTML = opts.map(([n,l])=>`<button data-n="${n}" class="${n===cur?"on":""}">${l}</button>`).join("");
+    $("lens").querySelectorAll("button").forEach(b=>b.onclick=()=>{ CH.n=+b.dataset.n; chSave(); paint(); });
+    $("exGo").disabled = !CH.secs.length;
+    $("exGo").textContent = CH.secs.length ? `Start the exam! (${cur} questions) ➜` : "Choose at least one section";
+  };
+  boxes.forEach(b=>b.onchange=()=>{ CH.secs = boxes.filter(x=>x.checked).map(x=>x.value); chSave(); paint(); });
+  $("whole").onclick=()=>{ CH.secs = CH.secs.length===CARDS.length ? [] : CARDS.map(c=>c.id); chSave(); paint(); };
+  paint();
+  $("exGo").onclick = ()=>{ if(!CH.secs.length) return; chSave(); examStart(buildExam(CH.secs, Math.min(CH.n, available(CH.secs))), CH.secs); };
 }
-/* Elige preguntas al azar respetando el reparto por tipo (como mucho 2 de mapa y 1 de cada megalito) */
-function buildExam(n){
-  const quota = QUOTAS[n], fams = {};
-  BANK.questions.forEach(q => (fams[famOf(q)] ||= []).push(q));
-  let chosen = [];
-  Object.entries(quota).forEach(([f,k])=>{
-    let pool = shuffle(fams[f]||[]), got = [], spots = 0;
-    for(const q of pool){
-      if(got.length>=k) break;
-      if(q.t==="spot"){ if(spots>=2) continue; spots++; }
-      got.push(q);
-    }
-    chosen.push(...got);
+/* Preguntas al azar solo de las secciones elegidas, repartidas por igual entre ellas y variando el tipo */
+function buildExam(secs, n){
+  let spots = 0;
+  const lists = {};
+  secs.forEach(g=>{
+    const fams = {};
+    shuffle(qsOf(g)).forEach(q=>(fams[famOf(q)] ||= []).push(q));
+    const order = shuffle(Object.keys(fams)), out = [];
+    while(order.some(f=>fams[f].length)) order.forEach(f=>{ if(fams[f].length) out.push(fams[f].shift()); });
+    lists[g] = out;
   });
+  const take = g => { const L = lists[g]; while(L.length){ const q = L.shift(); if(q.t==="spot"){ if(spots>=SPOT_MAX) continue; spots++; } return q; } return null; };
+  const quota = Object.fromEntries(secs.map(g=>[g, Math.floor(n/secs.length)]));
+  shuffle(secs).slice(0, n % secs.length).forEach(g=>quota[g]++);
+  const chosen = [];
+  let missing = 0;
+  secs.forEach(g=>{ for(let k=0;k<quota[g];k++){ const q = take(g); if(q) chosen.push(q); else { missing += quota[g]-k; break; } } });
+  while(missing>0){
+    let moved = false;
+    for(const g of shuffle(secs)){ if(missing<=0) break; const q = take(g); if(q){ chosen.push(q); missing--; moved = true; } }
+    if(!moved) break;
+  }
   return shuffle(chosen).map(q=>q.id);
 }
 /* Prepara una pregunta: baraja opciones, elige imagen, elige parejas */
@@ -542,15 +594,15 @@ function instance(id){
   if(q.t==="mc") o.opts = shuffle([q.a, ...q.o]);
   if(q.t==="order"){ let s; do{ s = shuffle(q.a); } while(s.join("|")===q.a.join("|")); o.items = s; }
   if(q.t==="match"){
-    let pool = q.pool==="vocabulary" ? ALL_VOCAB.filter(v=>!v.added).map(v=>[v.en, v.es]) : q.pool;
+    const pool = q.pool;
     const seenR = new Set(), pairs = [];
     for(const p of shuffle(pool)){ if(pairs.length>=q.n) break; if(seenR.has(p[1])) continue; seenR.add(p[1]); pairs.push(p); }
     o.pairs = pairs; o.right = shuffle(pairs.map(p=>p[1]));
   }
   return o;
 }
-function examStart(ids){
-  EX.data = {start:Date.now(), qs:ids.map(instance), res:[]};
+function examStart(ids, secs){
+  EX.data = {start:Date.now(), secs:secs||[...new Set(ids.map(id=>BYID[id].g))], qs:ids.map(instance), res:[]};
   exSave(); examAsk();
 }
 function examAsk(){
@@ -564,7 +616,7 @@ function examAsk(){
     <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
     <div class="stats"><span>Question ${k+1} of ${d.qs.length}</span><span>⭐ ${fmtG(Math.round(pts(d)*10)/10)}</span></div>
     <div class="q" id="qbox">
-      <span class="kind">${KIND[famOf(q)==="pic" && q.t==="mc" ? "pic" : q.t]}</span>
+      <span class="kind">${KIND[famOf(q)==="pic" && q.t==="mc" ? "pic" : q.t]} · Section ${SECNO[q.g]}</span>
       ${img}
       <div id="body"></div>
       <div id="fb"></div>
@@ -718,25 +770,30 @@ function examResults(){
   window.scrollTo(0,0);
   const d = EX.data, g = grade(d), n = d.qs.length;
   const full = d.res.filter(r=>r.pts>=1).length, zero = d.res.filter(r=>r.pts<=0).length, half = n-full-zero;
-  const wrong = d.qs.map((inst,i)=>({inst, r:d.res[i], q:BYID[inst.id]})).filter(x=>x.r && x.r.pts<1);
+  const rows = d.qs.map((inst,i)=>({inst, r:d.res[i], q:BYID[inst.id]}));
+  const wrong = rows.filter(x=>x.r && x.r.pts<1).sort((a,b)=>SECNO[a.q.g]-SECNO[b.q.g]);
+  const secs = [...new Set(rows.map(x=>x.q.g))].sort((a,b)=>SECNO[a]-SECNO[b]);
+  const bySec = secs.map(g=>{ const rs = rows.filter(x=>x.q.g===g); const p = rs.reduce((s,x)=>s+(x.r?x.r.pts:0),0); return {g, n:rs.length, p, nota:Math.round(p/rs.length*100)/10}; });
+  const scope = (d.secs||secs).length===CARDS.length ? "Whole unit" : (d.secs||secs).length===1 ? `Section ${secLabel((d.secs||secs)[0])}` : `Sections ${(d.secs||secs).map(g=>SECNO[g]).sort((a,b)=>a-b).join(", ")}`;
   const stars = g>=9?3: g>=7?2: g>=5?1:0;
   if(g>=9) confetti();
   const msg = g>=9?"Outstanding! 🏆": g>=7?"Very good! 🌟": g>=5?"You passed! 👍":"Keep studying! 💪";
   app.innerHTML = `
-    <div class="hello"><div class="owl" aria-hidden="true">🗿</div><div class="bubble"><h1>${msg}</h1><p>Prehistory exam · ${n} questions</p></div></div>
+    <div class="hello"><div class="owl" aria-hidden="true">🗿</div><div class="bubble"><h1>${msg}</h1><p>${esc(scope)} · ${n} questions</p></div></div>
     <div class="q end">
       <div class="stars">${[0,1,2].map(k=>`<span class="${k<stars?"":"off"}">⭐</span>`).join("")}</div>
       <p class="prompt">Nota</p>
       <div class="big">${fmtG(g)} <small>/ 10</small></div>
       <div class="score2"><div class="y">✅ ${full}</div>${half?`<div class="h">½ ${half}</div>`:""}<div class="n">❌ ${zero}</div></div>
+      ${bySec.length>1?`<div class="mist"><h3>📊 By section</h3>${bySec.map(b=>`<div class="bysec"><span>${esc(secLabel(b.g))}</span><b class="${b.nota>=5?"pass":"fail"}">${fmtG(b.nota)}</b><small>${fmtG(Math.round(b.p*10)/10)}/${b.n}</small></div>`).join("")}</div>`:""}
       ${wrong.length?`<div class="mist"><h3>📌 To study (${wrong.length})</h3>
-        ${wrong.map(x=>`<div class="mrow"><div class="e">${esc(x.q.q)}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.r.given && x.q.t!=="open"?`<br>Your answer: ${esc(x.r.given)}`:""}</div></div>`).join("")}
+        ${wrong.map(x=>`<div class="mrow"><span class="sectag">§ ${esc(secLabel(x.q.g))}</span><div class="e">${esc(x.q.q)}</div><div class="f">✔ <b>${esc(rightText(x.q,x.inst))}</b>${x.r.given && x.q.t!=="open"?`<br>Your answer: ${esc(x.r.given)}`:""}</div></div>`).join("")}
       </div>
       <button class="go" id="exRep">🔁 Repeat only the mistakes (${wrong.length})</button>`:""}
       <button class="go alt" id="exNew">New exam 📝</button>
       <button class="go alt" id="menu">Menu</button>
     </div>`;
-  const r=$("exRep"); if(r) r.onclick=()=>examStart(shuffle(wrong.map(x=>x.inst.id)));
+  const r=$("exRep"); if(r) r.onclick=()=>examStart(shuffle(wrong.map(x=>x.inst.id)), d.secs);
   $("exNew").onclick=examSetup;
   $("menu").onclick=home;
 }
