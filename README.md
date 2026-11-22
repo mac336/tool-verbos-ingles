@@ -5,3 +5,5 @@
   la URL antigua `6-primaria/ingles/` redirige ahí).
 - **1º ESO → History**: Prehistory, fichas, tarjetas y examen (`1-eso/history/`). Se genera desde el repo local
   `tool-1ero-eso` con `python3 tools/build.py --site <este repo>`.
+- **1º ESO → Lengua**: 11 secciones en el orden del libro, fichas, tarjetas, práctica y examen (`1-eso/lengua/`).
+  Se genera desde el repo local `tool-1ero-eso` con `python3 tools/build_lengua.py --site <este repo>`.
