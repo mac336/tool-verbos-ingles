@@ -66,6 +66,12 @@ details.help li{margin-bottom:4px}
 .mode b{display:block;font-size:1.2rem;font-weight:700;margin-top:4px}
 .mode span{display:block;font-size:.85rem;opacity:.95;line-height:1.25;margin-top:2px}
 .m-study{background:var(--mint)} .m-flash{background:var(--grape)} .m-prac{background:var(--sky);grid-column:1/-1}
+.m-open{background:#B8642E;grid-column:1/-1}
+textarea.oa{width:100%;min-height:110px;font:inherit;font-size:1.1rem;padding:10px 14px;border-radius:22px;border:4px solid var(--line);background:var(--chip);color:var(--ink);resize:vertical}
+textarea.oa:focus{border-color:var(--grape);outline:none}
+details.oa-w{margin-top:4px} details.oa-w summary{cursor:pointer;font-weight:600;color:var(--soft);text-align:center}
+.oa-mine{margin-top:12px;border-radius:18px;padding:10px 14px;background:var(--chip);white-space:pre-wrap}
+.answer.model{font-size:1.15rem;line-height:1.4}
 .listen{border:none;background:var(--card);border-radius:14px;padding:4px 12px;margin-top:8px;cursor:pointer;font-weight:600;box-shadow:0 2px 0 var(--line)}
 .why{margin-top:6px;font-weight:500;color:var(--ink)}
 .exam-card{display:block;width:100%;margin-top:14px;border:none;border-radius:26px;padding:16px 14px;cursor:pointer;text-align:center;color:#fff;
@@ -380,6 +386,7 @@ function home(){
         <li><b>Práctica</b>: ejercicios de la sección para estudiar. Se corrigen al momento y explican la respuesta; no hay nota y se pueden repetir.</li>
         <li><b>Tarjetas</b>: repaso de las palabras clave. Se ve la palabra, se intenta decir qué significa y se pulsa «Girar». Si lo sabía, «Lo sabía»; si no, «Otra vez» y vuelve a salir.</li>
         <li><b>Examen</b>: eliges una sección, varias o todas; preguntas desordenadas y distintas cada vez (tipo test, verdadero/falso, huecos, unir y ordenar). Se corrigen solas. En los huecos las tildes cuentan; si escribe la respuesta con una falta pequeña, puedes darla por buena.</li>
+        ${OE?`<li><b>Examen de pregunta abierta</b> (${esc(OE.title)}): sale una pregunta; contesta en voz alta, en papel o escribiendo en el cuadro (es opcional). Al pulsar «Ver respuesta» aparece la respuesta del libro y él mismo marca «La sabía» o «No la sabía». Al final ve cuántas sabía y puede repasar las que no.</li>`:""}
         <li>Al final sale la <b>nota sobre 10</b> y la lista de lo que hay que repasar, con un botón para repetir solo los fallos.</li>
         <li>${esc(META.source)}</li>
       </ul>
@@ -388,11 +395,13 @@ function home(){
       <button class="mode m-study" id="mStudy"><span class="ico">📖</span><b>Fichas</b><span>Lo que hay que saber, tablas y palabras clave</span></button>
       <button class="mode m-flash" id="mFlash"><span class="ico">🃏</span><b>Tarjetas</b><span>Palabras clave y su significado</span></button>
       <button class="mode m-prac" id="mPrac"><span class="ico">✏️</span><b>Práctica</b><span>Ejercicios por sección · corrección al momento, sin nota</span></button>
+      ${OE?`<button class="mode m-open" id="mOpen"><span class="ico">🗣️</span><b>Examen de pregunta abierta</b><span>${esc(OE.title)} (última unidad, p. ${esc(OE.pages)}) · ${OE.questions.length} preguntas con la respuesta oculta</span></button>`:""}
     </div>
     ${examHomeHTML()}`;
   $("mStudy").onclick = ()=>study(0);
   $("mFlash").onclick = flashSetup;
   $("mPrac").onclick = practiceSetup;
+  if(OE) $("mOpen").onclick = ()=>oaStart();
   bindExamHome();
 }
 
@@ -939,6 +948,72 @@ function examResults(){
     </div>`;
   const r=$("exRep"); if(r) r.onclick=()=>examStart(shuffle(wrong.map(x=>x.inst.id)), d.secs);
   $("exNew").onclick=examSetup;
+  $("menu").onclick=home;
+}
+
+/* ---------- Examen de pregunta abierta (respuesta oculta, se autocorrige) ---------- */
+const OE = H.openExam || null;
+let OA = null;
+function oaStart(ids){
+  const qs = ids ? ids.map(id=>OE.questions.find(q=>q.id===id)) : shuffle(OE.questions);
+  OA = {qs, res:[], text:{}, review:!!ids};
+  oaAsk();
+}
+function oaAsk(){
+  window.scrollTo(0,0);
+  const k = OA.res.length;
+  if(k >= OA.qs.length) return oaEnd();
+  const q = OA.qs[k], pct = k/OA.qs.length*100, knew = OA.res.filter(Boolean).length;
+  app.innerHTML = `
+    ${topBar("🗣️ Pregunta abierta")}
+    <div class="track"><i style="width:${pct}%"></i><span class="rocket" style="left:${pct}%">🚀</span></div>
+    <div class="stats"><span>Pregunta ${k+1} de ${OA.qs.length}</span><span>✅ ${knew}</span></div>
+    <div class="q" id="qbox">
+      <span class="kind">Pregunta abierta · ${esc(OE.title)}</span>
+      <p class="ins">Contesta con tus palabras y después mira la respuesta.</p>
+      <p class="ask">${esc(q.q)}</p>
+      <div id="hid">
+        <p class="parent">🗣️ Dilo en voz alta o escríbelo en papel. También puedes escribir aquí (no es obligatorio).</p>
+        <details class="oa-w"><summary>✍️ Escribir mi respuesta</summary><textarea class="oa" id="oaText" placeholder="Escribe aquí tu respuesta…"></textarea></details>
+        <button class="go" id="show">👁️ Ver respuesta</button>
+      </div>
+      <div id="shown" hidden>
+        <div id="mine"></div>
+        <div class="answer model"><b>📖 Respuesta:</b> ${esc(q.a)}</div>
+        <p class="prompt" style="margin-top:12px">¿La sabías?</p>
+        <div class="mark"><button class="yes" id="yes">✅ La sabía</button><button class="no" id="no">❌ No la sabía</button></div>
+      </div>
+    </div>`;
+  bindBack(()=>{ if(!OA.res.length || confirm("¿Salir del examen? Se pierde lo que llevas.")) home(); });
+  $("show").onclick=()=>{
+    sfxReveal();
+    const t = $("oaText").value.trim(); if(t) OA.text[q.id]=t;
+    $("mine").innerHTML = t?`<div class="oa-mine"><b>✍️ Tu respuesta:</b> ${esc(t)}</div>`:"";
+    $("hid").hidden=true; $("shown").hidden=false;
+  };
+  const mark = good => { OA.res.push(good); good?sfxOk():sfxKo(); oaAsk(); };
+  $("yes").onclick=()=>mark(true); $("no").onclick=()=>mark(false);
+}
+function oaEnd(){
+  window.scrollTo(0,0);
+  const n = OA.qs.length, knew = OA.res.filter(Boolean).length, wrong = OA.qs.filter((q,i)=>!OA.res[i]);
+  if(!wrong.length) confetti();
+  const msg = !wrong.length?"¡Las sabías todas! 🏆": knew/n>=.7?"¡Muy bien! 🌟": knew/n>=.5?"¡Bien! 👍":"¡A repasar! 💪";
+  app.innerHTML = `
+    <div class="hello"><div class="owl" aria-hidden="true">${META.mascot}</div><div class="bubble"><h1>${msg}</h1><p>🗣️ Pregunta abierta · ${esc(OE.title)}${OA.review?" · repaso":""}</p></div></div>
+    <div class="q end">
+      <p class="prompt">Sabías</p>
+      <div class="big">${knew} <small>de ${n}</small></div>
+      <div class="score2"><div class="y">✅ ${knew}</div><div class="n">❌ ${n-knew}</div></div>
+      ${wrong.length?`<div class="mist"><h3>📌 Las que no sabías (${wrong.length})</h3>
+        ${wrong.map(q=>`<div class="mrow"><div class="e">${esc(q.q)}</div><div class="f">📖 <b>${esc(q.a)}</b>${OA.text[q.id]?`<br>✍️ Tú: ${esc(OA.text[q.id])}`:""}</div></div>`).join("")}
+      </div>
+      <button class="go" id="oaRep">🔁 Repasar las que no sabía (${wrong.length})</button>`:""}
+      <button class="go alt" id="oaAgain">Examen entero otra vez 🔁</button>
+      <button class="go alt" id="menu">Menú</button>
+    </div>`;
+  const r=$("oaRep"); if(r) r.onclick=()=>oaStart(shuffle(wrong.map(q=>q.id)));
+  $("oaAgain").onclick=()=>oaStart();
   $("menu").onclick=home;
 }
 
